@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>Ball</title>
+
+        <style>
+            .table{
+                display: flex;
+                flex-direction: row;
+                margin: 5px;
+            }
+            .section{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                margin: 10px;
+            }
+        </style>
+    </head>   
+
+
+
+    <body>
+        
+        <div class = "table">
+            <div class ="section">
+                <div>
+                    <t>pos of x : </t><t id ="posx"></t>
+                </div>
+                <div>
+                    <t>pos of y : </t><t id ="posy"></t>
+                </div>
+            </div>
+            <div class ="section">
+                <div>
+                    <t>vel of x : </t><t id ="velx"></t>
+                </div>
+                <div>
+                    <t>vel of y : </t><t id ="vely"></t>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="myCanvas" style="border:2px solid"></canvas>
+        
+
+        <script>
+        
+
+        //canvas setup-----------------------------
+
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 100;
+
+        var simMinWidth = 600.0;
+        var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+        var simWidth = canvas.width / cScale;
+        var simHeight = canvas.height / cScale;
+
+        function cX(pos) {
+            return pos.x * cScale;
+        }
+
+        function cY(pos){
+            return canvas.height - pos.y * cScale;
+        }
+        
+        //scene
+
+        //vector math------------------------------
+
+        class Vector2 {
+            constructor(x = 0.0, y = 0.0) {
+                this.x = x; 
+                this.y = y;
+            }
+
+            set(v) {
+                this.x = v.x; this.y = v.y;
+            }
+
+            clone() {
+                return new Vector2(this.x, this.y);
+            }
+
+            add(v, s = 1.0) {
+                this.x += v.x * s;
+                this.y += v.y * s;
+                return this;
+            }
+
+            addVectors(a, b) {
+                this.x = a.x + b.x;
+                this.y = a.y + b.y;
+                return this;
+            }
+
+            subtract(v, s = 1.0) {
+                this.x -= v.x * s;
+                this.y -= v.y * s;
+                return this;
+            }
+
+            subtractVectors(a, b) {
+                this.x = a.x - b.x;
+                this.y = a.y - b.y;
+                return this;			
+            }
+
+            length() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+
+            scale(s) {
+                this.x *= s;
+                this.y *= s;
+            }
+
+            dot(v) {
+                return this.x * v.x + this.y * v.y;
+            }
+        }
+
+        class Ball {
+            constructor(radius, cw, pos, vel, density){
+                this.radius = radius;
+                this.area = Math.PI * radius * radius;
+                this.mass = 4/3 * radius * radius * radius * Math.PI * density;
+                this.cw = cw;
+                this.pos = pos.clone();
+                this.vel = vel.clone();
+            }
+            simulate(dt, gravity) {
+                this.vel.add(gravity, dt);
+                this.pos.add(this.vel, dt);
+            }
+            calculateAirResistance(dt) {
+                //Fg = 1/2 * cw * A * RhoLuft * v²
+                //m * a = ...
+                //m * dv/dt = ...
+                // dv = ... *dt/m
+
+                var dvx = 1/2 * this.cw * this.area * physicsScene.airDensity * this.vel.x * this.vel.x * dt / this.mass;
+                var dvy = 1/2 * this.cw * this.area * physicsScene.airDensity * this.vel.y * this.vel.y * dt / this.mass;
+                if (this.vel.x > 0)
+                    this.vel.x -= dvx;
+                else 
+                    this.vel.x += dvx;
+
+                if (this.vel.y > 0)
+                    this.vel.y -= dvy;
+                else
+                    this.vel.y += dvy;
+            }
+        }
+
+        var physicsScene = 
+        {
+            gravity : new Vector2(0.0, -9.81),
+            airDensity : 1.204,
+            dt : 1.0 / 60,
+            worldSize : new Vector2(simWidth, simHeight),
+            //paused: false,
+            balls: [],
+            restitution : 0.7
+        };
+
+        function setupScene() 
+        {
+            var numBalls = 2;
+            var radius = 5.0;
+            var cw = 0.45;
+            var ballDensity = 100.0;
+            //var pos = new Vector2(simWidth * 0.5, simHeight * 0.9);
+            var pos = new Vector2(radius, radius);
+            var vel = new Vector2(25.0, 100.0);
+
+            for (var i = 0; i < numBalls; i++) {
+                physicsScene.balls.push(new Ball(radius, cw, pos, vel, ballDensity));
+            }
+        }
+
+        //drawing----------------------------------
+
+        function draw() 
+        {
+            //c.clearRect(0, 0, canvas.width, canvas.height);
+            c.fillStyle = "#FF0000";
+
+            for (i = 0; i < physicsScene.balls.length; i++) {
+                if (i == 0)
+                    c.fillStyle = "#000000";
+                else
+                    c.fillStyle = "#FF0000";
+                var ball = physicsScene.balls[i];
+                c.beginPath();			
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius, 0.0, 2.0 * Math.PI); 
+                c.closePath();
+                c.fill();
+            }
+        }
+
+        function handleWallCollision(ball, worldSize) 
+        {
+            if (ball.pos.x < ball.radius) {
+                ball.pos.x = ball.radius;
+                ball.vel.x = -ball.vel.x * physicsScene.restitution;
+            }
+            if (ball.pos.x > worldSize.x - ball.radius) {
+                ball.pos.x = worldSize.x - ball.radius;
+                ball.vel.x = -ball.vel.x * physicsScene.restitution;
+            }
+            if (ball.pos.y < ball.radius) {
+                ball.pos.y = ball.radius;
+                ball.vel.y = -ball.vel.y * physicsScene.restitution;
+            }
+
+            if (ball.pos.y > worldSize.y - ball.radius) {
+                ball.pos.y = worldSize.y - ball.radius;
+                ball.vel.y = -ball.vel.y * physicsScene.restitution;
+            }
+        }
+
+        //simulation
+
+        function simulate(){
+                var ball1 = physicsScene.balls[0];
+                var ball2 = physicsScene.balls[1];
+
+                ball1.simulate(physicsScene.dt, physicsScene.gravity);
+                handleWallCollision(ball1, physicsScene.worldSize);
+                ball1.calculateAirResistance(physicsScene.dt);
+
+                ball2.simulate(physicsScene.dt, physicsScene.gravity);
+                handleWallCollision(ball2, physicsScene.worldSize);
+        }
+
+        //update------------------------------------
+
+        function update(){
+            simulate();
+            draw();
+
+            document.getElementById("posx").innerHTML = physicsScene.balls[0].pos.x.toFixed(2);
+            document.getElementById("posy").innerHTML = physicsScene.balls[0].pos.y.toFixed(2);
+
+            document.getElementById("velx").innerHTML = physicsScene.balls[0].vel.x.toFixed(2);
+            document.getElementById("vely").innerHTML = physicsScene.balls[0].vel.y.toFixed(2);
+
+
+            requestAnimationFrame(update);
+        }
+
+        setupScene();
+        update();
+
+        
+        </script>
+
+    </body>
+
+</html>

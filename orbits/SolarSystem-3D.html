@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>orbits</title>
+
+        <style>
+            .table{
+                display: flex;
+                flex-direction: row;
+                margin: 5px;
+            }
+            .section{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                margin: 10px;
+            }
+            .slider {
+				-webkit-appearance: none;
+				width: 200px;
+				height: 6px;
+				border-radius: 5px;
+				background: #d3d3d3;
+				outline: none;
+				opacity: 0.7;
+				-webkit-transition: .2s;
+				transition: opacity .2s;
+            }
+        </style>
+    </head>   
+
+    <body>
+        Simulation Speed <input type = "range" min = "0" max = "11" value = "0" id = "speedSlider" class = "slider">
+
+        <div class = "table">
+            <div class ="section">
+                <div>
+                    <t>time passed : </t><t id ="timePassed"></t> years
+                </div>
+                <div>
+                    <t></t><t id ="test"></t>
+                </div>
+            <!--</div>
+            <div class ="section">
+                <div>
+                    <t>Mercury : x : </t><t id ="posxM"></t>
+                </div>
+                <div>
+                    <t>Mercury : y : </t><t id ="posyM"></t>
+                </div>
+            </div>
+            <div class ="section">
+                <div>
+                    <t>Sun : x : </t><t id ="posxS"></t>
+                </div>
+                <div>
+                    <t>Sun : y : </t><t id ="posyS"></t>
+                </div>
+            </div>
+            <div class ="section">
+                <div>
+                    <t>test </t><t id ="test"></t>
+                </div>
+                <div>
+                    <t>test2 </t><t id ="test2"></t>
+                </div>//-->
+            </div>
+        </div>
+
+        <br><br>
+        <div id="container"></div>
+
+        <script src="https://unpkg.com/three@0.139.2/build/three.min.js"></script>
+        <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
+
+        <script>
+        
+            const renderScale = 1e11;
+
+            var threeScene;
+            var renderer;
+            var camera;
+            var cameraControl;
+
+            var physicsScene = 
+            {
+                dt : 1.0 / 75.0,
+                G : 6.67430 * Math.pow(10, -11),
+                //paused: false,
+                balls: [],
+            };
+
+            //await fetchData();
+
+            /*async function fetchData()
+            {   
+                let res = await fetch("/data/horizons_results.txt");
+                console.log(res);
+                let text = await res.text();
+                
+                document.getElementById("test").innerHTML = text;
+            }*/
+
+            var sunDistances = {    //Aphelion  
+                mercury : 69818 * Math.pow(10, 6),
+                venus : 108941 * Math.pow(10, 6),
+                earth : 152100 * Math.pow(10, 6),
+                mars :  249261 * Math.pow(10, 6),
+                jupiter : 816363 * Math.pow(10,6),
+                saturn : 1506527 * Math.pow(10,6),
+                uranus : 3001390 * Math.pow(10,6),
+                neptune : 4558857 * Math.pow(10,6), 
+            }
+
+            var arrDistances = [    //Aphelion  
+                69818 * Math.pow(10, 6),
+                108941 * Math.pow(10, 6),
+                152100 * Math.pow(10, 6),
+                249261 * Math.pow(10, 6),
+                816363 * Math.pow(10,6),
+                1506527 * Math.pow(10,6),
+                3001390 * Math.pow(10,6),
+                4558857 * Math.pow(10,6), 
+            ];
+
+            var AphVelocities = [
+                0.0,
+                -38860.0,
+                -34780.0,
+                -29290.0,
+                -21970,
+                -12440.0,
+                -9140,
+                -6490,
+            ]
+        
+            
+            //Data (positions and velocities) taken from : A.D. 2023-Nov-28 00:00:00.0000 TDB on the website : https://ssd.jpl.nasa.gov/horizons/app.html#/
+            var planets = [
+                {
+                    name : "sun",
+                    radius : 6.96342 * Math.pow(10, 8) / 2,
+                    pos : new THREE.Vector3(0.0, 0.0, 0.0),
+                    vel : new THREE.Vector3(0.0, 0.0, 0.0),
+                    mass : 2 * Math.pow(10, 30),
+                    color : "#FFA833",
+                },
+                
+                {
+                    name : "mercury",
+                    radius : 4880 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(4.755268900109719E+07, -3.727029283233593E+07, -7.407496794330420E+06),
+                    vel : new THREE.Vector3(2.043964792310531E+01, 4.060658119905236E+01, 1.443601671468205E+00),
+                    mass : 3.3 * Math.pow(10, 23),
+                    color : "#CD8D0D",
+                },
+
+                {
+                    name : "venus",
+                    radius : 12104 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(-7.031990993755418E+07, 8.111704604870184E+07, 5.171527468935423E+06),
+                    vel : new THREE.Vector3(-2.658426817285173E+01, -2.312792028778433E+01, 1.216309852201719E+00),   
+                    mass : 48.7 * Math.pow(10, 23),
+                    color : "#C5C3BF",
+                },
+
+                {
+                    name : "earth",
+                    radius : 12756 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(6.203796482499160E+07, 1.339362027472784E+08, -8.144865113645792E+03),
+                    vel : new THREE.Vector3(-2.750313990554146E+01, 1.240389324124189E+01, -1.293832324250843E-03),  
+                    mass : 59.7 * Math.pow(10, 23),
+                    color : "#4390D4",
+                },
+
+                {
+                    name : "mars",
+                    radius : 6792 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(-1.128944103828590E+08, -1.982069104818122E+08, -1.384657069078252E+06),
+                    vel : new THREE.Vector3(2.196529664753793E+01, -9.916664542553510E+00, -7.466170368355103E-01), 
+                    mass : 6.42 * Math.pow(10, 23),
+                    color : "#DC530A",
+                },
+
+                {
+                    name : "jupiter",
+                    radius : 142984 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(5.496821796473606E+08, 5.023689611755135E+08, -1.438493332436290E+07),
+                    vel : new THREE.Vector3(-8.973411195638683E+00, 1.027009546719024E+01, 1.581441886929378E-01),  
+                    mass : 19000 * Math.pow(10, 23),
+                    color : "#D8B57E",
+                },
+
+                {
+                    name : "saturn",
+                    radius : 120536 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(1.336303709282916E+09, -5.820254477056626E+08, -4.306103939335746E+07),
+                    vel : new THREE.Vector3(3.314751960031254E+00, 8.846454452023137E+00, -2.852240753188355E-01),     
+                    mass : 5690 * Math.pow(10, 23),
+                    color : "#C7B08D",
+                },
+
+                {
+                    name : "uranus",
+                    radius : 51118 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(1.851452328578858E+09, 2.277222353230452E+09, -1.554564004324210E+07),
+                    vel : new THREE.Vector3(-5.342718993845282E+00, 3.990187406379337E+00, 8.408274398304916E-02),     
+                    mass : 868 * Math.pow(10, 23),
+                    color : "#0CEED6",
+                },
+
+                {
+                    name : "neptune",
+                    radius : 49528 * Math.pow(10, 3) / 2,
+                    pos : new THREE.Vector3(4.463589142395042E+09, -2.839833622181799E+08, -9.701537490489168E+07),
+                    vel : new THREE.Vector3(3.020124681985122E-01, 5.469699367052732E+00, -1.192300409744582E-01),       
+                    mass : 1020 * Math.pow(10, 23),
+                    color : "#063FAF",
+                },
+            ]
+
+            //km to m
+            for (var i = 0; i < planets.length; i++) {
+                planets[i].pos.multiplyScalar(1000);
+                planets[i].vel.multiplyScalar(1000);
+            }
+
+            
+
+            class Ball {
+                constructor(radius, pos, vel, mass, pColor){
+                    this.radius = radius;
+                    this.mass = mass;
+                    this.color = pColor;
+
+                    this.pos = pos;
+                    this.prevPos = pos;
+                    this.vel = vel;
+                    this.acceleration = new THREE.Vector3(0.0, 0.0, 0.0);
+
+                    var geometry = new THREE.SphereGeometry(100 * this.radius / renderScale, 32, 32 );
+                    var material = new THREE.MeshPhongMaterial({color: this.color});
+                    this.visMesh = new THREE.Mesh( geometry, material );
+                    this.visMesh.position.copy(this.pos);
+                    this.visMesh.position.multiplyScalar(1 / renderScale);
+                    this.material = new THREE.LineDashedMaterial( {
+                        color: 0x0000ff,
+                        linewidth: 1,
+                        scale: 1,
+                        dashSize: 3,
+                        gapSize: 1,
+                    } );
+
+                    threeScene.add(this.visMesh);
+                }
+                simulate(dt) {
+                    this.vel.addScaledVector(this.acceleration, dt);
+                    this.pos.addScaledVector(this.vel, dt);
+
+                    this.visMesh.position.copy(this.pos);
+                    this.visMesh.position.multiplyScalar(1 / renderScale);
+                    this.prevPos = this.pos;
+                }
+                updateAcceleration() {
+                    //Gravity
+
+                    var vectorSum = new THREE.Vector3(0.0, 0.0, 0.0);
+                    physicsScene.balls.forEach(ball => {
+                        if(this == ball)
+                            return;
+                        var dir = new THREE.Vector3();
+                        dir.subVectors(ball.pos, this.pos);
+                        var distSQ = dir.lengthSq();
+                        if (distSQ == 0)
+                            return;
+                        var gravity = physicsScene.G * ball.mass / (distSQ);
+                        dir.multiplyScalar(gravity / Math.sqrt(distSQ));
+                        vectorSum.add(dir);
+                    });
+                
+                    this.acceleration = vectorSum;
+                }
+                drawLine()
+                {
+                    var points = [];
+                    points.push(this.pos);
+                    points.push(this.prevPos);
+                    const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                    const line = new THREE.Line(geometry, this.material);
+                    threeScene.add(line);
+                }
+            }
+            
+            function setupScene() 
+            {
+
+                /*planets.forEach(planet => {
+                    var radius = planet.radius;
+                    if (planet) {
+                        
+                    }
+                    physicsScene.balls.push(new Ball(radius, planet.pos, planet.vel, planet.mass, planet.color))
+                });*/
+                for (let i = 0; i < planets.length; i++) {
+                    var radius = planets[i].radius;
+                    if (i > 0) {
+                        radius *= 10;
+                    }
+                    physicsScene.balls.push(new Ball(radius, planets[i].pos, planets[i].vel, planets[i].mass, planets[i].color));
+                }
+            }
+            
+            
+            
+            //simulation
+            var baseNumSteps = 1;
+            function simulate(){
+                    for (var i = 0; i < physicsScene.balls.length; i++) {
+                        var numSteps = baseNumSteps * physicsScene.balls[i].vel.length(); // planets[i].vel.y * 10;
+                        sdt = physicsScene.dt / numSteps;
+                        for (var j = 0; j < numSteps; j++) {
+                            physicsScene.balls[i].simulate(sdt);
+                            physicsScene.balls[i].updateAcceleration();
+                        }  
+                        physicsScene.balls[i].drawLine(); 
+                    }
+                    
+            }
+
+            function initThreeScene() 
+            {
+                threeScene = new THREE.Scene();
+                
+                //Light
+                threeScene.add( new THREE.AmbientLight( 0xffffff ) );				
+                
+                var helper = new THREE.GridHelper( 150, 50,);
+                helper.material.opacity = 0.7;
+                helper.material.transparent = false;
+                helper.position.set(0, 0, 0);
+                helper.rotateOnWorldAxis(new THREE.Vector3(1.0, 0.0, 0.0), Math.PI / 2);
+                //threeScene.add( helper );				
+                
+                // Renderer
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.shadowMap.enabled = true;
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( 0.8 * window.innerWidth, 0.8 * window.innerHeight );
+                window.addEventListener( 'resize', onWindowResize, false );
+                container.appendChild( renderer.domElement );
+                
+                // Camera
+                camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.001, 1000);
+                camera.position.set(0, 0, 100);
+                camera.updateMatrixWorld();	
+
+                threeScene.add(camera);
+
+                CameraControl = new THREE.OrbitControls(camera, renderer.domElement);
+                CameraControl.zoomSpeed = 5.0;
+
+            }
+
+            
+
+            function onWindowResize() {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }
+            
+            var reloading = false;
+            function inputs(){
+                
+                document.getElementById("speedSlider").oninput = function() {  
+                    physicsScene.dt = 1.0 / 75.0 * Math.pow(10, this.value);
+                }  
+
+                timepassed += physicsScene.dt / (365.2425 * 24*3600);
+                document.getElementById("timePassed").innerHTML = timepassed.toFixed(3);
+                
+            }
+            var timepassed = 0;
+
+
+            //update------------------------------------
+
+            
+            function update(){
+                inputs();
+                simulate();
+                
+                renderer.render(threeScene, camera);
+                CameraControl.update();
+                
+                
+
+                requestAnimationFrame(update);
+                
+            }
+            initThreeScene();
+            setupScene();
+
+            var backgroundSphere = new THREE.Mesh(
+                new THREE.SphereGeometry(200,10,10),
+                new THREE.MeshBasicMaterial({
+                    map: (new THREE.TextureLoader).load('https://imgs.search.brave.com/JKfqAkcNkn62rEQ74y6uDZKusR3AFs8dzHAhoPzPBao/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTE3/NDk0NjYxMy9waG90/by9zdGFycnktbmln/aHQtc2t5LmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz03YzJL/d0ZXUG85TUxHNWxV/aDYzSTlxbUpGUlVw/TWxXbTdlZHdnRGdU/TkxzPQ'),
+                    side: THREE.DoubleSide
+                })
+            );
+            threeScene.add(backgroundSphere);
+            //const loader = new THREE.TextureLoader();
+            //threeScene.background = loader.load( 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Hubble_ultra_deep_field.jpg/300px-Hubble_ultra_deep_field.jpg' );
+
+            update();
+        
+        </script>
+
+    </body>
+
+</html>

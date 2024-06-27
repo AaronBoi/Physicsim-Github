@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>orbits</title>
+
+        <style>
+            .table{
+                display: flex;
+                flex-direction: row;
+                margin: 5px;
+            }
+            .section{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                margin: 10px;
+            }
+            .slider {
+				-webkit-appearance: none;
+				width: 200px;
+				height: 6px;
+				border-radius: 5px;
+				background: #d3d3d3;
+				outline: none;
+				opacity: 0.7;
+				-webkit-transition: .2s;
+				transition: opacity .2s;
+            }
+        </style>
+    </head>   
+
+    <body>
+        Simulation Speed <input type = "range" min = "0" max = "12" value = "0" id = "speedSlider" class = "slider">
+        <select name="planet" id="planetDropDown">
+            <option value=""></option>
+            <option value="mercury">Mercury</option>
+            <option value="venus">Venus</option>
+            <option value="earth">Earth</option>
+            <option value="mars">Mars</option>
+            <option value="jupiter">Jupiter</option>
+            <option value="saturn">Saturn</option>
+            <option value="uranus">Uranus</option>
+            <option value="neptune">Neptune</option>
+        </select>
+
+        <div class = "table">
+            <div class ="section">
+                <div>
+                    <t>time passed : </t><t id ="timePassed"></t> years
+                </div>
+                <div>
+                    <t>test : </t><t id ="test"></t>
+                </div>
+            <!--</div>
+            <div class ="section">
+                <div>
+                    <t>Mercury : x : </t><t id ="posxM"></t>
+                </div>
+                <div>
+                    <t>Mercury : y : </t><t id ="posyM"></t>
+                </div>
+            </div>
+            <div class ="section">
+                <div>
+                    <t>Sun : x : </t><t id ="posxS"></t>
+                </div>
+                <div>
+                    <t>Sun : y : </t><t id ="posyS"></t>
+                </div>
+            </div>
+            <div class ="section">
+                <div>
+                    <t>test </t><t id ="test"></t>
+                </div>
+                <div>
+                    <t>test2 </t><t id ="test2"></t>
+                </div>//-->
+            </div>
+        </div>
+
+        <canvas id="myCanvas" style="border:2px solid"></canvas>
+
+
+        <script>
+        
+        
+        
+        
+        var sunDistances = {    //Aphelion  
+            mercury : 69818 * Math.pow(10, 6),
+            venus : 108941 * Math.pow(10, 6),
+            earth : 152100 * Math.pow(10, 6),
+            mars :  249261 * Math.pow(10, 6),
+            jupiter : 816363 * Math.pow(10,6),
+            saturn : 1506527 * Math.pow(10,6),
+            uranus : 3001390 * Math.pow(10,6),
+            neptune : 4558857 * Math.pow(10,6), 
+        }
+
+        var arrDistances = [    //Aphelion  
+            69818 * Math.pow(10, 6),
+            108941 * Math.pow(10, 6),
+            152100 * Math.pow(10, 6),
+            249261 * Math.pow(10, 6),
+            816363 * Math.pow(10,6),
+            1506527 * Math.pow(10,6),
+            3001390 * Math.pow(10,6),
+            4558857 * Math.pow(10,6), 
+        ];
+        
+
+        /*var sunDistances = {    //Perihelion 
+            mercury : 46000 * Math.pow(10, 6),
+            venus : 107480 * Math.pow(10, 6),
+            earth : 147095 * Math.pow(10, 6),
+            mars :  206650 * Math.pow(10, 6),
+            jupiter : 740595 * Math.pow(10,6),
+            saturn : 1357554 * Math.pow(10,6),
+            uranus : 2732696 * Math.pow(10,6),
+            neptune : 4471050 * Math.pow(10,6), 
+        }
+
+        var arrDistances = [    //Perihelion 
+            46000 * Math.pow(10, 6),
+            107480 * Math.pow(10, 6),
+            147095 * Math.pow(10, 6),
+            206650 * Math.pow(10, 6),
+            740595 * Math.pow(10,6),
+            1357554 * Math.pow(10,6),
+            2732696 * Math.pow(10,6),
+            4471050 * Math.pow(10,6), 
+        ];*/ 
+
+
+        //canvas setup-----------------------------
+
+        
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 100;
+
+        var scaleFactor = 2.1;
+        if(localStorage.getItem("planetSelect")) 
+            var indexSelect = localStorage.getItem("planetSelect"); 
+        else
+            var indexSelect = 1;
+        
+
+        var simMinWidth = arrDistances[indexSelect] * scaleFactor;
+        var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+        var simWidth = canvas.width / cScale;
+        var simHeight = canvas.height / cScale;
+
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        
+        function cX(pos) {
+            return pos.x * cScale;
+        }
+
+        function cY(pos){
+            return canvas.height - pos.y * cScale;
+        }
+        
+        
+
+        //vector math------------------------------
+
+        class Vector2 {
+            constructor(x = 0.0, y = 0.0) {
+                this.x = x; 
+                this.y = y;
+            }
+
+            set(v) {
+                this.x = v.x; this.y = v.y;
+            }
+
+            clone() {
+                return new Vector2(this.x, this.y);
+            }
+
+            add(v, s = 1.0) {
+                this.x += v.x * s;
+                this.y += v.y * s;
+                return this;
+            }
+
+            addVectors(a, b) {
+                this.x = a.x + b.x;
+                this.y = a.y + b.y;
+                return this;
+            }
+
+            subtract(v, s = 1.0) {
+                this.x -= v.x * s;
+                this.y -= v.y * s;
+                return this;
+            }
+
+            subtractVectors(a, b) {
+                this.x = a.x - b.x;
+                this.y = a.y - b.y;
+                return this;			
+            }
+
+            length() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+
+            scale(s) {
+                this.x *= s;
+                this.y *= s;
+            }
+
+            dot(v) {
+                return this.x * v.x + this.y * v.y;
+            }
+
+            perp() {
+                return new Vector2(this.y, -this.x);
+            }
+        }
+
+        class Ball {
+            constructor(radius, pos, vel, mass, color){
+                this.radius = radius;
+                this.mass = mass;
+                this.pos = pos.clone();
+                this.vel = vel.clone();
+                this.acceleration = new Vector2(0.0, 0.0);
+                this.color = color;
+            }
+            simulate(dt) {
+                this.prevPos = this.pos.clone();
+                this.prevVel = this.vel.clone();
+                this.vel.add(this.acceleration, dt);
+                this.pos.add(this.vel, dt);
+            }
+            updateAcceleration() {
+                //Gravity
+
+                var vectorSum = new Vector2();
+                physicsScene.balls.forEach(ball => {
+                    if(this == ball)
+                        return;
+                    var dir = new Vector2();
+                    dir.subtractVectors(ball.pos, this.pos);
+                    var abs = dir.length();
+                    if (abs == 0)
+                        return;
+                    var gravity = physicsScene.G * ball.mass / (abs * abs);
+                    dir.scale(gravity / abs);
+                    vectorSum.add(dir);
+                });
+            
+                this.acceleration = vectorSum;
+            }
+        }
+        
+
+        var physicsScene = 
+        {
+            dt : 1.0 / 75.0,
+            G : 6.67430 * Math.pow(10, -11),
+            //paused: false,
+            balls: [],
+        };
+
+        
+
+        var planets = [
+            {
+                name : "sun",
+                radius : 6.96342 * Math.pow(10, 8) / 2,
+                pos : new Vector2(simWidth / 2.0, simHeight / 2.0),
+                vel : new Vector2(0.0, 0.0),
+                mass : 2 * Math.pow(10, 30),
+                color : "#FFA833",
+            },
+            
+            {
+                name : "mercury",
+                radius : 4880 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.mercury, simHeight / 2.0),
+                vel : new Vector2(0.0, 38860.0),    //avarage: 47900 
+                mass : 3.3 * Math.pow(10, 23),
+                color : "#CD8D0D",
+            },
+
+            {
+                name : "venus",
+                radius : 12104 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.venus, simHeight / 2.0),
+                vel : new Vector2(0.0, 34780.0),    //avarage: 35000
+                mass : 48.7 * Math.pow(10, 23),
+                color : "#C5C3BF",
+            },
+
+            {
+                name : "earth",
+                radius : 12756 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.earth, simHeight / 2.0),
+                vel : new Vector2(0.0, 29290.0),    //avarage: 29800
+                mass : 59.7 * Math.pow(10, 23),
+                color : "#4390D4",
+            },
+
+            {
+                name : "mars",
+                radius : 6792 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.mars, simHeight / 2.0),
+                vel : new Vector2(0.0, 21970),      //avarage: 24100
+                mass : 6.42 * Math.pow(10, 23),
+                color : "#DC530A",
+            },
+
+            {
+                name : "jupiter",
+                radius : 142984 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.jupiter, simHeight / 2.0),
+                vel : new Vector2(0.0, 12440.0),    //avarage: 13100
+                mass : 19000 * Math.pow(10, 23),
+                color : "#D8B57E",
+            },
+
+            {
+                name : "saturn",
+                radius : 120536 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.saturn, simHeight / 2.0),
+                vel : new Vector2(0.0, 9140),       //avarage: 9600
+                mass : 5690 * Math.pow(10, 23),
+                color : "#C7B08D",
+            },
+
+            {
+                name : "uranus",
+                radius : 51118 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.uranus, simHeight / 2.0),
+                vel : new Vector2(0.0, 6490),       //avarage: 6800
+                mass : 868 * Math.pow(10, 23),
+                color : "#0CEED6",
+            },
+
+            {
+                name : "neptune",
+                radius : 49528 * Math.pow(10, 3) / 2,
+                pos : new Vector2(simWidth / 2.0 - sunDistances.neptune, simHeight / 2.0),
+                vel : new Vector2(0.0, 5370),       //avarage: 5400
+                mass : 1020 * Math.pow(10, 23),
+                color : "#063FAF",
+            },
+        ]
+        
+        
+        function setupScene() 
+        {
+
+            planets.forEach(planet => {
+                physicsScene.balls.push(new Ball(planet.radius, planet.pos, planet.vel, planet.mass, planet.color))
+            });
+        }
+
+        //simulation
+        var baseNumSteps = 50;
+        function simulate(){
+                for (var i = 0; i < physicsScene.balls.length; i++) {
+                    var numSteps = baseNumSteps * physicsScene.balls[i].vel.length() / planets[1].vel.y * 1000;
+                    sdt = physicsScene.dt / numSteps;
+                    for (var j = 0; j < numSteps; j++) {
+                        physicsScene.balls[i].simulate(sdt);
+                        physicsScene.balls[i].updateAcceleration();
+                    }   
+                }
+                
+        }
+
+        //drawing----------------------------------
+
+        function draw() 
+        {
+            var visualFactor = 1;
+
+            //c.clearRect(0, 0, canvas.width, canvas.height);
+            c.fillStyle = "#FF0000";
+
+            for (i = 0; i < physicsScene.balls.length; i++) {
+                
+                if (i == 0)
+                    visualFactor = 5;
+                else
+                    visualFactor = 50;
+                
+                var ball = physicsScene.balls[i];
+                c.fillStyle = physicsScene.balls[i].color;
+                c.beginPath();			
+                c.arc(
+                    cX(ball.pos), cY(ball.pos), cScale * ball.radius * visualFactor, 0.0, 2.0 * Math.PI); 
+                c.closePath();
+                c.fill();
+            }
+        }
+
+        var reloading = false;
+        function Inputs(){
+            //planetselect
+            document.getElementById("planetDropDown").oninput = function() {  
+                localStorage.setItem("planetSelect", this.value);
+            }  
+
+            for (var i = 0; i < planets.length; i++) {
+                if (planets[i].name == localStorage.getItem("planetSelect").toLowerCase()) {
+                    localStorage.setItem("planetSelect", i - 1);
+                }
+                
+            }
+            
+            var prevIndex = localStorage.getItem("planetSelect"); 
+            if (prevIndex != indexSelect && !reloading) {
+                reloading = true;
+                location.reload();
+            }
+
+            //speedSlider
+            document.getElementById("speedSlider").oninput = function() {  
+                physicsScene.dt = 1.0 / 75.0 * Math.pow(10, this.value);1
+                localStorage.setItem("speedSlider", this.value);
+            }  
+            if (localStorage.getItem("speedSlider") != undefined) {
+                //document.getElementById("speedSlider").value = physicsScene.dt = localStorage.getItem("speedSlider");
+            }
+        }
+        
+        
+        var timepassed = 0;
+        //update------------------------------------
+        function update(){
+            Inputs();
+
+            simulate();
+            
+            draw();
+            timepassed += 1 / (365.2425 * 24*3600);
+            
+
+            /*document.getElementById("posxS").innerHTML = physicsScene.balls[0].pos.x.toExponential(8);
+            document.getElementById("posyS").innerHTML = physicsScene.balls[0].pos.y.toExponential(8);
+
+            document.getElementById("posxM").innerHTML = physicsScene.balls[1].pos.x.toExponential(8);
+            document.getElementById("posyM").innerHTML = physicsScene.balls[1].pos.y.toExponential(8);
+
+            document.getElementById("simWidth").innerHTML = simWidth.toExponential(3);
+            document.getElementById("simHeight").innerHTML = simHeight.toExponential(3);*/
+            
+            //document.getElementById("test").innerHTML = time2;
+            
+            document.getElementById("timePassed").innerHTML = (timepassed * physicsScene.dt).toFixed(3);
+
+            requestAnimationFrame(update);
+            
+        }
+
+        setupScene();
+        update();
+
+        
+        </script>
+
+    </body>
+
+</html>

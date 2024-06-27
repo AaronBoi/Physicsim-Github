@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <head>
+        <title>Falling Sand</title>
+        <style>
+			body {
+				font-family: verdana; 
+				font-size: 15px;
+			}			
+			
+        </style>
+        
+    </head>   
+
+    <body>
+        <div>
+            Grid Size <input type = "range" min = "10" max = "500" value = "10" id = "gridSlider" class = "slider">
+            Num of Particles : <div id = "numParticles"></div>
+        </div>
+        <canvas id="myCanvas" style="border:2px solid"></canvas>
+        
+        <script>
+
+
+        //physics scene----------------------------
+
+        var physicsScene = 
+        {
+            dt : 1.0 / 75,
+            grid: [],
+            rows : 10,
+            cols : 10,
+            padding : 2,
+            
+        };
+        var mouseX = -1;
+        var mouseY = -1;
+        var mouseDown = false;
+        var paintSize = 1;
+        var hueValue = 200;
+        var numParticles = 0;
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+
+        class particle {
+            constructor(x, y, hue = 0, checked = false, particleSize = physicsScene.padding) {
+                this.x = x,
+                this.y = y,
+                this.hue = hue,
+                this.checked = checked,
+                this.particleSize = particleSize
+            }
+            
+            draw(){
+
+                if (this.hue > 0) {
+                    drawSquare(this.x, this.y, this.particleSize, this.hue);
+                }
+            }
+            swapWith(x, y){
+                //this.updatePos(x, y);
+                //physicsScene.grid[x][y].updatePos(this.x, this.y);
+                swapParticles(this.x, this.y, x, y);
+                this.updatePos(x, y);
+                physicsScene.grid[x][y].updatePos(this.x, this.y);
+            }
+            updatePos(x, y){
+                this.x = x,
+                this.y = y
+            }
+        }
+
+
+        function setupScene() 
+        {
+            physicsScene.cols = physicsScene.rows;
+            canvas.height = window.innerHeight - 100;
+            canvas.width = canvas.height;
+            physicsScene.padding = canvas.height / physicsScene.rows;
+            canvas.style.background = "#FFFFFFF";
+
+            physicsScene.grid = Make2DArray(physicsScene.rows, physicsScene.cols);
+            document.getElementById("gridSlider").value = physicsScene.rows;
+        }
+        
+
+        
+
+        //drawing----------------------------------
+
+        function draw() 
+        {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+
+            numParticles = 0;
+            /*
+            for (let i = 0; i < physicsScene.rows; i++) {
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    physicsScene.grid[i][j].draw();
+                }
+                
+            }           
+            */
+            for (let i = 0; i < physicsScene.rows; i++) {
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    if (physicsScene.grid[i][j].hue > 0) {
+                        drawSquare(i, j, physicsScene.padding, physicsScene.grid[i][j].hue);
+                    }
+                    
+                }
+                
+            }            
+            document.getElementById("numParticles").innerText = numParticles;
+        }
+
+
+
+        //simulation-------------------------------
+        
+        function simulate(dt) 
+        {
+            //var oldGrid = structuredClone(physicsScene.grid);
+            
+            for (let i = 0; i < physicsScene.rows; i++) {
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    physicsScene.grid[i][j].checked = false;
+                }
+                
+            }
+            for (let i = physicsScene.rows - 1; i >= 0; i--) {
+                if (i >= physicsScene.rows - 1) {       //skip lowest row because sand cant move down there
+                    continue;
+                }
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    thisParticle = physicsScene.grid[i][j];
+                    
+                    if (thisParticle.hue > 0 && !thisParticle.checked) {        //this particle is full
+                        thisParticle.checked = true;
+                        
+                        belowParticle = physicsScene.grid[i + 1][j];
+                        
+                        if(belowParticle.hue <= 0){
+                            //swapParticles(i + 1, j, i, j);
+                            physicsScene.grid[i][j].swapWith(i + 1, j);
+                        }
+
+                        else if (belowParticle.hue > 0 && j > 0 && j < physicsScene.cols - 1) {       //directly down is full
+
+                            var rand = Math.random() < 0.5 ? 1 : -1;
+                            var checkGrid = physicsScene.grid[i + 1][j + rand];
+                            
+                            if (physicsScene.grid[i + 1][j + rand].hue < 1) {
+                                //swapParticles(i + 1, j + rand, i, j);
+                                physicsScene.grid[i][j].swapWith(i + 1, j + rand);
+                            }
+                          
+                        }
+                        
+                    }
+                    
+                }
+            }
+        }
+
+        function spawnOnMouse(paintS){
+            if (mouseDown && mouseX > -1 && mouseY > -1) {
+                for (let i = 0; i < paintS; i++) {
+                    for (let j = 0; j < paintS; j++) {
+                        if ((j * i) % 5 == 0) {
+                            spawnParticle(mouseX + j, mouseY + i);
+                            spawnParticle(mouseX + j, mouseY - i);
+                            spawnParticle(mouseX - j, mouseY + i);
+                            spawnParticle(mouseX - j, mouseY - i);
+                        }
+                    }
+                    
+                }
+            }
+        }
+        function spawnParticle(x, y) {
+            if (x < physicsScene.cols && y < physicsScene.rows && x >= 0 && y >= 0) {
+                hueValue += 0.005;
+                physicsScene.grid[y][x].hue = hueValue; 
+            }
+        }
+
+        function drawSquare(x, y, squareLength, hue){
+            c.fillStyle = 'hsl('+ hue +',100%,50%)';
+            c.fillRect(y * squareLength, x * squareLength, squareLength, squareLength); 
+        }
+
+        function swapParticles(x1, y1, x2, y2){
+            temp = physicsScene.grid[x1][y1];
+            physicsScene.grid[x1][y1] = physicsScene.grid[x2][y2];
+            physicsScene.grid[x2][y2] = temp;
+        }
+
+
+        function Make2DArray(cols, rows) {
+            arr = new Array(rows);
+            for (let i = 0; i < rows; i++) {
+                arr[i] = new Array(cols);
+                for (let j = 0; j < cols; j++) {
+                    arr[i][j] = new particle(i, j);
+                    
+                }
+            }
+            return arr;
+        }
+
+        //update------------------------------------
+        
+        var oddFrame = true;
+        function update(){
+            oddFrame =! oddFrame;
+            simulate(physicsScene.dt);
+            if (oddFrame) {
+                spawnOnMouse(paintSize);
+            }
+            draw();
+
+
+            requestAnimationFrame(update);
+        }
+
+
+        setupScene();
+        update();
+
+
+
+
+        document.getElementById("gridSlider").oninput = function() {
+            
+            physicsScene.rows = this.value;
+            setupScene();
+	    }    
+
+        canvas.addEventListener("mousemove", onMouseMove, false);
+        function onMouseMove(event)
+        {   
+           
+            var rect = canvas.getBoundingClientRect()
+            canvasX = event.clientX - rect.left;
+            canvasY = event.clientY - rect.top;
+            
+            mouseX = Math.floor(canvasX / physicsScene.padding);
+            mouseY = Math.floor(canvasY / physicsScene.padding);            
+
+        }
+
+        canvas.addEventListener("mouseleave", onMouseLeave, false);
+        function onMouseLeave(event){
+            mouseX = mouseY = -1;
+        }
+        
+        document.body.onmousedown = function() { 
+            mouseDown = true;
+        }
+        document.body.onmouseup = function() {
+            mouseDown = false;
+        }
+
+        window.addEventListener("wheel", event => {
+            const delta = Math.sign(event.deltaY);
+            if (delta < 0 && paintSize < 10) {
+                paintSize++;
+            }
+            if (delta > 0 && paintSize > 1) {
+                paintSize--;
+            }
+        });
+
+        </script>
+
+    </body>
+
+</html>

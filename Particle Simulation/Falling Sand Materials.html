@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <head>
+        <title>Falling Sand</title>
+        <style>
+			body {
+				font-family: verdana; 
+				font-size: 15px;
+			}		
+            .materialButton{
+                background-color: #04AA6D; /* Green */
+                border-style: solid;
+                border-color: white;
+                color: white;
+                padding: 20px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                
+            }
+            .buttons{
+                position: absolute;
+                top: 10px;
+                left: 400px;
+                display: flex;
+                gap: 10px;
+            }
+            #myCanvas{
+                position: absolute;
+                bottom: 20px;
+                left: 500px;
+            }	
+            #sand{background-color: #ecf0b8;}
+            #water{background-color: #60caeb;}
+            #air{background-color: #a7a4a441;}
+            #stone{background-color: #0d0e0d;}
+
+            
+            
+        </style>
+        
+    </head>   
+
+    <body>
+        <div>
+            <div>
+                <div>
+                    Grid Size <input type = "range" min = "10" max = "500" value = "10" id = "gridSlider" class = "slider">
+                   
+                    
+                    
+                </div>
+                <div>
+                    Num of Particles : <t id = "numParticles"></t>
+                </div>
+            </div>
+            
+            <canvas id="myCanvas" style="border:2px solid"></canvas>
+        </div>
+        <div class="buttons">
+            <button onclick="materialButton(event)" type="button" class="materialButton" id="air"></button>
+            <button onclick="materialButton(event)" type="button" class="materialButton" id="sand"></button>
+            <button onclick="materialButton(event)" type="button" class="materialButton" id="water"></button>
+            <button onclick="materialButton(event)" type="button" class="materialButton" id="stone"></button>
+
+        </div>
+        
+        
+        <script>
+
+
+        //physics scene----------------------------
+
+        var physicsScene = 
+        {
+            dt : 1.0 / 75,
+            grid: [],
+            rows : 10,
+            cols : 10,
+            padding : 2,
+            
+        };
+
+        class material{
+            constructor(name, id, color) {
+                this.name = name,
+                this.id = id,
+                this.color = color
+                
+            }
+        }
+
+        const air = new material("air", 0, "#ffffff");
+        const sand = new material("sand", 1, "#ecf0b8");
+        const water = new material("water", 2, "#60caeb");
+        const stone = new material("stone", 3, "#0d0e0d");
+
+        particle = {
+            material : air,
+            checked : false,
+            kinEnergy : 100,
+        };
+
+        const materialmap = new Map([
+            ["air", air],
+            ["sand", sand],
+            ["water", water],
+            ["stone", stone],
+        ]);
+
+
+        var selectedMat = sand;
+        var mouseX = -1;
+        var mouseY = -1;
+        var mouseDown = false;
+        var paintSize = 1;
+        var numParticles = 0;
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+        
+
+        function materialButton(event){
+            selectedMat = materialmap.get(event.target.id);
+        }
+
+        function setupScene() 
+        {
+            physicsScene.cols = physicsScene.rows;
+            canvas.height = window.innerHeight - 150;
+            canvas.width = canvas.height;
+            physicsScene.padding = canvas.height / physicsScene.rows;
+            canvas.style.background = "#FFFFFFF";
+
+            physicsScene.grid = Make2DArray(physicsScene.rows, physicsScene.cols);
+            document.getElementById("gridSlider").value = physicsScene.rows;
+        }
+        
+
+        //drawing----------------------------------
+
+        function draw() 
+        {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            c.strokeStyle = "#AAAAAA";
+
+            c.stroke();
+            numParticles = 0;
+            for (let i = 0; i < physicsScene.rows; i++) {
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    if (physicsScene.grid[i][j].material.id > 0) {
+                        numParticles++;
+                        c.fillStyle = physicsScene.grid[i][j].material.color;
+                        c.fillRect(j * physicsScene.padding, i * physicsScene.padding, physicsScene.padding, physicsScene.padding);
+                    }
+                    
+                }
+                
+            }            
+            document.getElementById("numParticles").innerText = numParticles;
+        }
+
+
+
+        //simulation-------------------------------
+        
+        function simulate(dt) 
+        {
+            /*
+            for (let i = 0; i < physicsScene.rows; i++) {
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    physicsScene.grid[i][j].checked = false;
+                }
+                
+            }*/
+
+            for (let i = physicsScene.rows - 1; i >= 0; i--) {
+        
+                for (let j = 0; j < physicsScene.cols; j++) {
+                    thisParticle = (physicsScene.grid[i][j]);
+                    
+                    switch(thisParticle.material.id){
+
+                        case 0:
+                            break;
+                        case 1:
+                            if (i >= physicsScene.rows - 1) continue;
+
+                            if (physicsScene.grid[i + 1][j].material.id == 0) {
+                                physicsScene.grid[i][j].kinEnergy = 100;
+                                swapParticles(i + 1, j, i, j);
+                            }
+
+                            else{      //directly down is full
+                                var rand = Math.random() < 0.5 ? 1 : -1;
+                                if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
+                                if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
+                                    physicsScene.grid[i][j].kinEnergy = 100;
+                                    swapParticles(i + 1, j + rand, i, j);
+                                    
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (i >= physicsScene.rows - 1) continue;
+                         
+                            
+                            if (physicsScene.grid[i + 1][j].material.id == 0) swapParticles(i + 1, j, i, j);
+                            
+
+                            else {       //directly down is full
+                                var rand = Math.random() < 0.5 ? 1 : -1;
+                                if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
+                                if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
+                                    physicsScene.grid[i][j].kinEnergy = 100;
+                                    swapParticles(i + 1, j + rand, i, j);
+                                    
+                                }
+                                else if (physicsScene.grid[i][j + rand].material.id == 0 && physicsScene.grid[i][j].kinEnergy > 0) {
+                                    physicsScene.grid[i][j].kinEnergy -= 0.3;
+                                    swapParticles(i, j + rand, i, j);
+                                    
+                                }
+                            }
+
+                            break;
+                        case 3:
+                            break;
+                    } 
+                    
+                }
+            }
+        }
+
+        function spawnOnMouse(paintS){
+            if (mouseDown && mouseX > -1 && mouseY > -1) {
+                for (let i = 0; i < paintS; i++) {
+                    for (let j = 0; j < paintS; j++) {
+                        if ((j * i) % 2 == 0) {
+                            spawnParticle(mouseX + j, mouseY + i);
+                            spawnParticle(mouseX + j, mouseY - i);
+                            spawnParticle(mouseX - j, mouseY + i);
+                            spawnParticle(mouseX - j, mouseY - i);
+                        }
+                    }
+                    
+                }
+            }
+        }
+        function spawnParticle(x, y) {
+            if (x < physicsScene.cols && y < physicsScene.rows && x >= 0 && y >= 0) {
+                physicsScene.grid[y][x].material = selectedMat; 
+                
+            }
+        }
+
+        function swapParticles(x1, y1, x2, y2){
+            temp = structuredClone(physicsScene.grid[x1][y1]);
+            physicsScene.grid[x1][y1] = structuredClone(physicsScene.grid[x2][y2]);
+            physicsScene.grid[x2][y2] = structuredClone(temp);
+        }
+
+
+        function Make2DArray(cols, rows) {
+            arr = new Array(rows);
+            for (let i = 0; i < rows; i++) {
+                arr[i] = new Array(cols);
+                for (let j = 0; j < cols; j++) {
+                    arr[i][j] = structuredClone(particle);
+                    
+                }
+            }
+            return arr;
+        }
+
+        //update------------------------------------
+        var timeArr = [];
+        var oddFrame = true;
+        function update(){
+            //console.time();
+            oddFrame =! oddFrame;
+            simulate(physicsScene.dt);
+            if (oddFrame) {
+                spawnOnMouse(paintSize);
+            }
+            draw();
+
+            timeArr.push(console.timeEnd());
+            console.log(timeArr);
+            requestAnimationFrame(update);
+        }
+
+
+        setupScene();
+        update();
+
+
+
+
+        document.getElementById("gridSlider").oninput = function() {
+            
+            physicsScene.rows = this.value;
+            setupScene();
+	    }    
+
+        canvas.addEventListener("mousemove", onMouseMove, false);
+        function onMouseMove(event)
+        {   
+           
+            var rect = canvas.getBoundingClientRect()
+            canvasX = event.clientX - rect.left;
+            canvasY = event.clientY - rect.top;
+            
+            mouseX = Math.floor(canvasX / physicsScene.padding);
+            mouseY = Math.floor(canvasY / physicsScene.padding);            
+
+        }
+
+        canvas.addEventListener("mouseleave", onMouseLeave, false);
+        function onMouseLeave(event){
+            mouseX = mouseY = -1;
+        }
+        
+        document.body.onmousedown = function() { 
+            mouseDown = true;
+        }
+        document.body.onmouseup = function() {
+            mouseDown = false;
+        }
+
+        window.addEventListener("wheel", event => {
+            const delta = Math.sign(event.deltaY);
+            if (delta < 0 && paintSize < 10) {
+                paintSize++;
+            }
+            if (delta > 0 && paintSize > 1) {
+                paintSize--;
+            }
+        });
+
+        </script>
+
+    </body>
+
+</html>

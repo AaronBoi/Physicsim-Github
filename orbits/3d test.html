@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <body>
+        <div id="container"></div>
+        <script src="https://unpkg.com/three@0.139.2/build/three.min.js"></script>
+        <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
+		<script>
+            
+            //------------------------------------------
+            var threeScene;
+			var renderer;
+			var camera;
+			var CameraControl;
+            
+            // physics scene
+
+            var physicsScene = 
+			{
+				dt : 1 / 75,
+				objects: [],			
+			};
+
+            //------------------------------------------
+            
+            class Ball {
+				constructor(pos, radius, vel, tcolor)
+				{
+					// physics data 
+
+                    this.pos = pos;
+                    this.radius = radius;
+                    this.vel = vel;
+
+					// visual mesh
+
+                    var geometry = new THREE.SphereGeometry( this.radius, 32, 32 );
+                    var material = new THREE.MeshPhongMaterial({color: tcolor});
+                    this.visMesh = new THREE.Mesh( geometry, material );
+					this.visMesh.position.copy(this.pos);
+		
+					threeScene.add(this.visMesh);
+				}
+				simulate() {
+					this.pos.addScaledVector(this.vel, physicsScene.dt);
+					this.visMesh.position.copy(this.pos);
+				}
+
+			}
+
+            function initPhysics() 
+			{
+				var points = [];
+
+				var pos = new THREE.Vector3(0.0, 10.0, 0.0);
+				var vel = new THREE.Vector3(0.0, 0.0, -1.0);
+				var angle = 30;
+				vel.applyAxisAngle(new THREE.Vector3(1.0, 0.0, 0.0), Math.PI * angle / 180);
+				var color = "#ff0000";
+
+				points.push(pos);
+				physicsScene.objects.push(new Ball(pos, 1, vel, color));
+
+				pos = new THREE.Vector3(50.0, 10.0, 0.0);
+				vel = new THREE.Vector3(0.0, 0.0, 0.0);
+				color = "#000000";
+
+				points.push(pos);
+				physicsScene.objects.push(new Ball(pos, 1, vel, color));
+
+				var material = new THREE.LineDashedMaterial( {
+                    color: 0x0000ff,
+                    linewidth: 1000,
+                    scale: 1,
+                    dashSize: 3,
+                    gapSize: 1,
+                } );
+
+				material = new THREE.LineBasicMaterial( {
+					color: 0x00ffff,
+					linewidth: 100,
+					linecap: 'round', //ignored by WebGLRenderer
+					linejoin:  'round' //ignored by WebGLRenderer
+				} );
+
+				
+                
+                
+                const geometry = new THREE.BufferGeometry().setFromPoints( points );
+                const line = new THREE.Line(geometry, material);
+                threeScene.add(line);
+				
+
+			}
+
+            function initThreeScene() 
+			{
+				threeScene = new THREE.Scene();
+				
+				//Light
+				threeScene.add( new THREE.AmbientLight( 0xffffff ) );	
+				
+
+				var spotLight = new THREE.SpotLight( 0xffffff );
+				spotLight.angle = Math.PI / 5;
+				spotLight.penumbra = 0.2;
+				spotLight.position.set( 2, 3, 3 );
+				spotLight.castShadow = true;
+				spotLight.shadow.camera.near = 3;
+				spotLight.shadow.camera.far = 10;
+				spotLight.shadow.mapSize.width = 1024;
+				spotLight.shadow.mapSize.height = 1024;
+				threeScene.add( spotLight );
+
+				var dirLight = new THREE.DirectionalLight( 0x55505a, 1 );
+				dirLight.position.set( 0, 3, 0 );
+				dirLight.castShadow = true;
+				dirLight.shadow.camera.near = 1;
+				dirLight.shadow.camera.far = 10;
+
+				dirLight.shadow.camera.right = 1;
+				dirLight.shadow.camera.left = - 1;
+				dirLight.shadow.camera.top	= 1;
+				dirLight.shadow.camera.bottom = - 1;
+
+				dirLight.shadow.mapSize.width = 1024;
+				dirLight.shadow.mapSize.height = 1024;
+				threeScene.add( dirLight );
+				
+				var helper = new THREE.GridHelper( 200, 200,);
+				helper.material.opacity = 0.7;
+				helper.material.transparent = true;
+				helper.position.set(0, 0, 0);
+				threeScene.add( helper );				
+				
+				// Renderer
+
+				renderer = new THREE.WebGLRenderer();
+				//gRenderer.shadowMap.enabled = true;
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( 0.8 * window.innerWidth, 0.8 * window.innerHeight );
+				window.addEventListener( 'resize', onWindowResize, false );
+				container.appendChild( renderer.domElement );
+				
+				// Camera
+						
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000000000000);
+			    camera.position.set(0, 100, 0);
+				camera.updateMatrixWorld();	
+
+				threeScene.add(camera);
+
+				CameraControl = new THREE.OrbitControls(camera, renderer.domElement);
+				CameraControl.zoomSpeed = 10.0;
+
+			}
+         
+            
+
+            function onWindowResize() {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+            }
+
+           
+            
+
+            //update------------------------------------
+
+            function update() {
+				renderer.render(threeScene, camera);
+				requestAnimationFrame(update);
+
+				for (var i = 0; i < physicsScene.objects.length; i++) {
+					physicsScene.objects[i].simulate();
+				}
+			}
+			
+			initThreeScene();
+			onWindowResize();
+			initPhysics();
+			update();
+            
+        </script>
+
+    </body>
+
+</html>

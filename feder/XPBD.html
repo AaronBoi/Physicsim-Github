@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>XPBD</title>
+
+        <style>
+            .table{
+                display: flex;
+                flex-direction: row;
+                margin: 5px;
+            }
+            .section{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                margin: 10px;
+            }
+            .button {
+				background-color: #606060;
+				border: none;
+				color: white;
+				padding: 10px 32px;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+        </style>
+    </head>   
+
+
+
+    <body>
+
+        <button class="button" onclick="setupScene()">Chain</button>
+        <button class="button" onclick="setupSceneCircle()">Circle</button>
+        
+        <br>
+        <canvas id="myCanvas" style="border:2px solid"></canvas>   
+
+        <script>
+        
+
+        //canvas setup-----------------------------
+
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+        
+        function cX(pos) {
+            return pos.x * cScale;
+        }
+
+        function cY(pos){
+            return canvas.height - pos.y * cScale;
+        }
+        
+        //scene
+
+        //vector math------------------------------
+
+        class Vector2 {
+            constructor(x = 0.0, y = 0.0) {
+                this.x = x; 
+                this.y = y;
+            }
+
+            set(v) {
+                this.x = v.x; this.y = v.y;
+            }
+
+            clone() {
+                return new Vector2(this.x, this.y);
+            }
+
+            add(v, s = 1.0) {
+                this.x += v.x * s;
+                this.y += v.y * s;
+                return this;
+            }
+
+            addVectors(a, b) {
+                this.x = a.x + b.x;
+                this.y = a.y + b.y;
+                return this;
+            }
+
+            subtract(v, s = 1.0) {
+                this.x -= v.x * s;
+                this.y -= v.y * s;
+                return this;
+            }
+
+            subtractVectors(a, b) {
+                this.x = a.x - b.x;
+                this.y = a.y - b.y;
+                return this;			
+            }
+
+            lengthSq() {
+                return this.x * this.x + this.y * this.y;
+            }
+
+            length() {
+                return Math.sqrt(this.lengthSq());
+            }
+
+
+            scale(s) {
+                this.x *= s;
+                this.y *= s;
+                return this;
+            }
+
+            dot(v) {
+                return this.x * v.x + this.y * v.y;
+            }
+            norm() {
+                var l = this.length();
+                if(l != 0) {
+                    this.x = this.x / l;
+                    this.y = this.y / l;
+                }
+            }
+        }
+
+        class Particle {
+            constructor(radius, pos, vel, mass){
+                this.locked = false;
+                this.radius = radius;
+                this.mass = mass;
+                this.pos = pos.clone();
+                this.vel = vel.clone();
+            }
+            simulate(gravity, dt) {
+                //this.vel.add(gravity, dt);
+                if (!this.locked) {
+                this.pos.add(this.vel, dt);
+                }
+            }
+
+
+        }
+
+        class Spring {
+            constructor(part1, part2, restLength, alpha) {
+                this.restLength = restLength;
+                this.part1 = part1;
+                this.part2 = part2;
+                this.w1 = 1 / part1.mass;
+                this.w2 = 1 / part2.mass;
+                this.alpha = alpha;
+            }
+            solveDistance(dt) {
+
+                var dir = new Vector2();
+                dir.subtractVectors(this.part1.pos, this.part2.pos);
+                var len = dir.length();
+                if (len == 0) 
+                    return;
+                dir.scale(1.0 / len);
+                var lambda = (this.restLength - len) / (this.w1 + this.w2 + (this.alpha / (dt)));
+                var dir1 = dir.clone().scale(lambda * this.w1);
+                var dir2 = dir.clone().scale(-lambda * this.w2);
+                this.part1.pos.add(dir1);
+                this.part2.pos.add(dir2);
+            }
+            show() {
+                drawLine(this.part1.pos, this.part2.pos, 1 , 'black');
+            }
+        }
+
+        function handleWallCollision(ball, worldSize) 
+        {
+            if (ball.pos.x <= ball.radius) {
+                ball.pos.x = ball.radius;
+                ball.vel.x = -ball.vel.x;
+            }
+            if (ball.pos.x >= worldSize.x - ball.radius) {
+                ball.pos.x = worldSize.x - ball.radius;
+                ball.vel.x = -ball.vel.x;
+            }
+            if (ball.pos.y <= ball.radius) {
+                ball.pos.y = ball.radius;
+                ball.vel.y = -ball.vel.y;
+            }
+
+            if (ball.pos.y >= worldSize.y - ball.radius) {
+                ball.pos.y = worldSize.y - ball.radius;
+                ball.vel.y = -ball.vel.y;
+            }
+        }
+
+        var simMinWidth = 20.0;
+        var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+        var simWidth = canvas.width / cScale;
+        var simHeight = canvas.height / cScale;
+
+        var physicsScene = 
+        {
+            gravity : new Vector2(0.0, -9.81),
+            dt : 1.0 / 75,
+            worldSize : new Vector2(simWidth, simHeight),
+            //paused: false,
+            particles: [],
+            springs: [],
+        };
+
+        function setupScene() 
+        {
+
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 100;
+
+            window.simMinWidth = 20.0;
+            window.cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            window.simWidth = canvas.width / cScale;
+            window.simHeight = canvas.height / cScale;
+
+            physicsScene.particles = [];
+            physicsScene.springs = [];
+            var alpha = 0.005;
+            var numParticles = 10;
+            var restLength = 10 / numParticles;
+            var radius = 0.1;
+            var mass = 0.1;
+            var pos = new Vector2(0.1 * simWidth, 0.5 * simHeight);
+            var vel = new Vector2(0.0, 0.0);
+
+            for (var i = 0; i < numParticles; i++) {
+                physicsScene.particles[i] = new Particle(radius, pos, vel, mass);
+
+                if(i > 0) {
+                    physicsScene.springs[i - 1] = new Spring(physicsScene.particles[i - 1], physicsScene.particles[i], restLength, alpha);
+                }
+
+                pos.x += restLength;
+            }
+            physicsScene.springs[physicsScene.particles.length - 1] = new Spring(physicsScene.particles[0], physicsScene.particles[physicsScene.particles.length - 1], restLength, alpha);
+            
+        }
+
+        function setupSceneCircle() 
+        {
+            canvas.height = window.innerHeight - 100;
+            canvas.width = canvas.height;
+            
+
+            window.simMinWidth = 20.0;
+            window.cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+            window.simWidth = canvas.width / cScale;
+            window.simHeight = canvas.height / cScale;
+
+
+            physicsScene.particles = [];
+            physicsScene.springs = [];
+            var alpha = 0.1;
+            var restLength = 0.8;
+            var numParticles = 100;
+            var radius = 0.05;
+            var mass = 0.1;
+            var pos = new Vector2(0.1 * simWidth, 0.5 * simHeight);
+            var vel = new Vector2(0.0, 0.0);
+
+            for (var i = 0; i < numParticles; i++) {
+                var x = Math.sin(i / numParticles * 2 * Math.PI);
+                var y = Math.cos(i / numParticles * 2 * Math.PI);
+                pos.x = x * (simWidth * 0.4) + simWidth / 2;
+                pos.y = y * (simHeight * 0.4) + simHeight / 2;
+                physicsScene.particles[i] = new Particle(radius, pos, vel, mass);
+            }
+
+            for (var i = 0; i < numParticles; i++) {
+                if(i > 0) {
+                    physicsScene.springs[i - 1] = new Spring(physicsScene.particles[i - 1], physicsScene.particles[i], restLength, alpha);
+                }
+            }
+            physicsScene.springs[physicsScene.particles.length - 1] = new Spring(physicsScene.particles[0], physicsScene.particles[physicsScene.particles.length - 1], restLength, alpha);
+             
+        }
+
+        //drawing----------------------------------
+
+        function draw() 
+        {
+            c.clearRect(0, 0, canvas.width, canvas.height);
+            c.fillStyle = "#FF0000";
+
+            for (var i = 0; i < physicsScene.springs.length; i++) {
+                physicsScene.springs[i].show();
+            }
+
+            for (var i = 0; i < physicsScene.particles.length; i++) {
+                var particle = physicsScene.particles[i];
+                drawDisc(particle);
+            }
+            
+            
+        }
+        function drawLine(pos1, pos2, thickness = 2, color = 'black') {
+            c.strokeStyle = color;
+            c.lineWidth = thickness;
+            c.beginPath();
+            c.moveTo(cX(pos1), cY(pos1));
+            c.lineTo(cX(pos2), cY(pos2));
+            c.stroke();
+        }
+
+        function drawDisc(particle)
+        {
+            c.beginPath();			
+            c.arc(
+                cX(particle.pos), cY(particle.pos), cScale * particle.radius, 0.0, 2.0 * Math.PI); 
+            c.closePath();
+            c.fill();
+        }
+
+
+        //simulation
+        var numSteps = 10;
+        var timeSum = 0;
+        var timeFrame = 0;
+
+        function simulate(){
+
+            var startTime = performance.now();
+
+            var dt = physicsScene.dt / numSteps;
+
+            for (var i = 0; i < numSteps; i++) {
+                for (var i = 0; i < physicsScene.springs.length; i++) {
+                    physicsScene.springs[i].solveDistance(dt);
+                
+                }
+
+                for (var i = 0; i < physicsScene.particles.length; i++) {
+                    physicsScene.particles[i].simulate(physicsScene.gravity, dt);
+                    
+                }
+                
+            }
+            for (var i = 0; i < physicsScene.particles.length; i++) {
+                    handleWallCollision(physicsScene.particles[i], physicsScene.worldSize); 
+            }
+
+            var endTime = performance.now();
+            timeSum += endTime - startTime; 
+            timeFrames++;
+
+            if (timeFrames > 10) {
+                timeSum /= timeFrames;
+                document.getElementById("ms").innerHTML = timeSum.toFixed(3);		
+                timeFrames = 0;
+                timeSum = 0;
+            }	
+            
+                       
+
+            
+        }
+
+        //update------------------------------------
+
+        function update(){
+            simulate();
+            draw();
+
+            requestAnimationFrame(update);
+        }
+
+        setupScene();
+
+        
+
+        update();
+
+        canvas.addEventListener("mousedown", onMouseDown, false);
+        canvas.addEventListener("mouseup", onMouseUp, false);
+        canvas.addEventListener("mousemove", onMouseMove, false);
+
+        function onMouseDown(event)
+        {
+            var rect = canvas.getBoundingClientRect();
+            var mousePos = new Vector2(
+                (event.clientX - rect.left) / cScale,
+                simHeight - (event.clientY - rect .top) / cScale);
+            physicsScene.particles[0].pos = mousePos;
+            physicsScene.particles[0].locked = true;
+        }
+
+        function onMouseUp(event)
+        {
+            physicsScene.particles[0].locked = false;
+        }
+
+        function onMouseMove(event)
+        {   
+            if(physicsScene.particles[0].locked){
+                var rect = canvas.getBoundingClientRect();
+                var mousePos = new Vector2(
+                    (event.clientX - rect.left) / cScale,
+                    simHeight - (event.clientY - rect .top) / cScale);
+                physicsScene.particles[0].pos = mousePos;
+            }
+        }
+
+        </script>
+
+    </body>
+
+</html>

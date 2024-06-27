@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <head>
+        <title>test</title>
+        <style>
+			body {
+				font-family: verdana; 
+				font-size: 15px;
+			}			
+			.button {
+				background-color: #606060;
+				border: none;
+				color: white;
+				padding: 10px 32px;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+        </style>
+    </head>   
+
+    <body>
+
+        <canvas id="myCanvas" style="border:2px solid"></canvas>
+
+        <script>
+
+        //canvas setup-----------------------------
+
+        var canvas = document.getElementById("myCanvas");
+        var c = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 100;
+
+        var simMinWidth = 20.0;
+        var cScale = Math.min(canvas.width, canvas.height) / simMinWidth;
+        var simWidth = canvas.width / cScale;
+        var simHeight = canvas.height / cScale;
+
+        function cX(pos) {
+            return pos * cScale;
+        }
+
+        function cY(pos){
+            return canvas.height - pos * cScale;
+        }
+
+        c.fillStyle = "#FF0000";
+
+        c.beginPath();			
+            c.arc(
+                cX(10), cY(10), 1.0 * cScale, 0.0, 2.0 * Math.PI); 
+            c.closePath();
+            c.fill();
+            //c.clearRect(0, 0, canvas.width, canvas.height);
+        
+        
+
+        </script>
+
+    </body>
+
+</html>
