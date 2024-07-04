@@ -131,7 +131,7 @@
             simulate(gravity, dt) {
                 //this.vel.add(gravity, dt);
                 if (!this.locked) {
-                this.pos.add(this.vel, dt);
+                    this.pos.add(this.vel, dt);
                 }
             }
             addForce(force, dt) {
@@ -223,28 +223,23 @@
 
             physicsScene.particles = [];
             physicsScene.springs = [];
-            var cSpring = 1000;
+            var cSpring = 200;
             var restLength = 10;
-            var numParticles = 1000;
-            var radius = 0.05;
+            var numParticles = 20;
+            var radius = .5;
             var mass = 10;
             var pos = new Vector2(0.1 * simWidth, 0.5 * simHeight);
             var vel = new Vector2(0.0, 0.0);
 
-            for (var i = 0; i < numParticles; i++) {
-                var x = Math.sin(i / numParticles * 2 * Math.PI);
-                var y = Math.cos(i / numParticles * 2 * Math.PI);
-                pos.x = x * (simWidth * 0.4) + simWidth / 2;
-                pos.y = y * (simHeight * 0.4) + simHeight / 2;
-                physicsScene.particles[i] = new Particle(radius, pos, vel, mass);
-            }
-            for (var i = 0; i < numParticles; i++) {
-                if(i < numParticles - 1)
-                    physicsScene.springs[i] = new Spring(physicsScene.particles[i], physicsScene.particles[i + 1], cSpring, restLength);
-                else
-                    physicsScene.springs[i] = new Spring(physicsScene.particles[i], physicsScene.particles[0]);
-            }
-             
+            physicsScene.particles.push(new Particle(radius, new Vector2(0.5 * simWidth, 0.8 * simHeight), vel, mass));
+            physicsScene.particles.push(new Particle(radius, new Vector2(0.5 * simWidth, 0.2 * simHeight), vel, mass));
+            physicsScene.particles[0].locked = true;
+
+            physicsScene.springs[0] = new Spring(physicsScene.particles[0], physicsScene.particles[1], cSpring, restLength);
+
+            
+
+            
         }
 
         //drawing----------------------------------
@@ -262,7 +257,6 @@
                 var particle = physicsScene.particles[i];
                 drawDisc(particle);
             }
-            
             
         }
         function drawLine(pos1, pos2, thickness = 2, color = 'black') {
@@ -292,8 +286,9 @@
             for (var i = 0; i < numSteps; i++) {
                 for (var i = 0; i < physicsScene.springs.length; i++) {
                     physicsScene.springs[i].calcForce(dt);
-                
+                    physicsScene.springs[i].show();
                 }
+
 
                 for (var i = 0; i < physicsScene.particles.length; i++) {
                     physicsScene.particles[i].simulate(physicsScene.gravity, dt);
@@ -302,9 +297,14 @@
             }
 
             for (var i = 0; i < physicsScene.particles.length; i++) {
-                    physicsScene.particles[i].vel.scale(0.985);
+                //physicsScene.particles[i].vel.scale(0.985);
             }
             
+            for (let i = 0; i < physicsScene.particles.length; i++) {
+                physicsScene.particles[i].simulate(dt);
+                
+            }
+
             
 
             
@@ -325,6 +325,7 @@
 
         update();
 
+        /*
         canvas.addEventListener("mousedown", onMouseDown, false);
         canvas.addEventListener("mouseup", onMouseUp, false);
         canvas.addEventListener("mousemove", onMouseMove, false);
@@ -354,7 +355,7 @@
                 physicsScene.particles[0].pos = mousePos;
             }
         }
-
+        */
         </script>
 
     </body>

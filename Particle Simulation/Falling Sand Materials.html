@@ -58,6 +58,9 @@
                 <div>
                     Num of Particles : <t id = "numParticles"></t>
                 </div>
+                <div>
+                    ms per Frame : <t id = "Performance"></t>
+                </div>
             </div>
             
             <canvas id="myCanvas" style="border:2px solid"></canvas>
@@ -113,7 +116,7 @@
             ["stone", stone],
         ]);
 
-
+        var dispersionRate = 5;
         var selectedMat = sand;
         var mouseX = -1;
         var mouseY = -1;
@@ -171,8 +174,8 @@
         
         function simulate(dt) 
         {
-            /*
-            for (let i = 0; i < physicsScene.rows; i++) {
+            
+            /*for (let i = 0; i < physicsScene.rows; i++) {
                 for (let j = 0; j < physicsScene.cols; j++) {
                     physicsScene.grid[i][j].checked = false;
                 }
@@ -180,60 +183,69 @@
             }*/
 
             for (let i = physicsScene.rows - 1; i >= 0; i--) {
-        
-                for (let j = 0; j < physicsScene.cols; j++) {
-                    thisParticle = (physicsScene.grid[i][j]);
-                    
-                    switch(thisParticle.material.id){
+                //for (let x = 0; x < 2; x++) {     //x loop to make it spread slower, but slightly lessen left-shift
+                
+                    for (let j = 0; j < physicsScene.cols; j++) {
+                        //if (j % 2 == x) continue;
+                        thisParticle = (physicsScene.grid[i][j]);
+                        //if (thisParticle.checked) continue;
 
-                        case 0:
-                            break;
-                        case 1:
-                            if (i >= physicsScene.rows - 1) continue;
+                        switch(thisParticle.material.id){
 
-                            if (physicsScene.grid[i + 1][j].material.id == 0) {
-                                physicsScene.grid[i][j].kinEnergy = 100;
-                                swapParticles(i + 1, j, i, j);
-                            }
+                            case 0:
+                                break;
+                            case 1:     //sand
+                                if (i >= physicsScene.rows - 1) continue;
 
-                            else{      //directly down is full
-                                var rand = Math.random() < 0.5 ? 1 : -1;
-                                if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
-                                if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
+                                if (physicsScene.grid[i + 1][j].material.id == 0) {
                                     physicsScene.grid[i][j].kinEnergy = 100;
-                                    swapParticles(i + 1, j + rand, i, j);
-                                    
+                                    swapParticles(i + 1, j, i, j);
                                 }
-                            }
-                            break;
-                        case 2:
-                            if (i >= physicsScene.rows - 1) continue;
-                         
-                            
-                            if (physicsScene.grid[i + 1][j].material.id == 0) swapParticles(i + 1, j, i, j);
-                            
 
-                            else {       //directly down is full
-                                var rand = Math.random() < 0.5 ? 1 : -1;
-                                if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
-                                if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
-                                    physicsScene.grid[i][j].kinEnergy = 100;
-                                    swapParticles(i + 1, j + rand, i, j);
-                                    
+                                else{      //directly down is full
+                                    var rand = Math.random() < 0.5 ? 1 : -1;
+                                    if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
+                                    if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
+                                        physicsScene.grid[i][j].kinEnergy = 100;
+                                        swapParticles(i + 1, j + rand, i, j);
+                                        
+                                    }
                                 }
-                                else if (physicsScene.grid[i][j + rand].material.id == 0 && physicsScene.grid[i][j].kinEnergy > 0) {
-                                    physicsScene.grid[i][j].kinEnergy -= 0.3;
-                                    swapParticles(i, j + rand, i, j);
-                                    
-                                }
-                            }
+                                break;
+                            case 2:     //water
+                                if (i >= physicsScene.rows - 1) continue;
+                            
+                                
+                                if (physicsScene.grid[i + 1][j].material.id == 0) swapParticles(i + 1, j, i, j);
+                                
 
-                            break;
-                        case 3:
-                            break;
-                    } 
-                    
-                }
+                                else {
+                                    
+                                    var randdir = Math.random() < 0.5 ? 1 : -1;
+
+                                    for (let k = 1; k < dispersionRate; k++) {
+                                        rand = randdir * k;
+                                        if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
+                                    
+                                        if (physicsScene.grid[i][j + rand].material.id == 1 || physicsScene.grid[i][j + rand].material.id == 3 ) break;
+
+                                        if (physicsScene.grid[i][j + rand].material.id == 0 && physicsScene.grid[i][j].kinEnergy > 0) {
+
+                                            physicsScene.grid[i][j].kinEnergy -= 0.3;
+                                            swapParticles(i, j + rand, i, j);
+                                            break;
+                                            
+                                        }
+                                    }
+                                }
+
+                                break;
+                            case 3:
+                                break;
+                        } 
+                        
+                    }
+                //}
             }
         }
 
@@ -260,9 +272,10 @@
         }
 
         function swapParticles(x1, y1, x2, y2){
-            temp = structuredClone(physicsScene.grid[x1][y1]);
-            physicsScene.grid[x1][y1] = structuredClone(physicsScene.grid[x2][y2]);
-            physicsScene.grid[x2][y2] = structuredClone(temp);
+            //physicsScene.grid[x2][y2].checked = true;
+            temp = (physicsScene.grid[x1][y1]);
+            physicsScene.grid[x1][y1] = (physicsScene.grid[x2][y2]);
+            physicsScene.grid[x2][y2] = (temp);
         }
 
 
@@ -278,20 +291,41 @@
             return arr;
         }
 
+        function getAvarage(arr){
+            var sum = 0;
+            for (let i = 0; i < arr.length; i++) {
+                sum += arr[i];
+                
+            }
+            return sum / arr.length;
+        }
+
         //update------------------------------------
         var timeArr = [];
-        var oddFrame = true;
+        var frameCount = 0;
+        var startTime = 0;
+        var endTime = 0;
         function update(){
-            //console.time();
-            oddFrame =! oddFrame;
+            frameCount++;
+            startTime = performance.now();
             simulate(physicsScene.dt);
-            if (oddFrame) {
+            if (frameCount % 2 == 0) {
                 spawnOnMouse(paintSize);
             }
             draw();
 
-            timeArr.push(console.timeEnd());
-            console.log(timeArr);
+            endTime = performance.now();
+            timeArr.unshift(endTime - startTime);
+            
+            
+            
+            if (timeArr.length > 100) {
+                timeArr.pop();
+            }
+            if (frameCount % 100 == 0) {
+                document.getElementById("Performance").innerHTML = getAvarage(timeArr);
+            }
+            
             requestAnimationFrame(update);
         }
 
