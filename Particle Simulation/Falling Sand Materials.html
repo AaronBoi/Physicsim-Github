@@ -197,7 +197,7 @@
                             case 1:     //sand
                                 if (i >= physicsScene.rows - 1) continue;
 
-                                if (physicsScene.grid[i + 1][j].material.id == 0) {
+                                if (physicsScene.grid[i + 1][j].material.id == 0 || physicsScene.grid[i + 1][j].material.id == 2) {
                                     physicsScene.grid[i][j].kinEnergy = 100;
                                     swapParticles(i + 1, j, i, j);
                                 }
@@ -205,7 +205,7 @@
                                 else{      //directly down is full
                                     var rand = Math.random() < 0.5 ? 1 : -1;
                                     if (j + rand < 0 || j + rand > physicsScene.cols - 1) continue;
-                                    if (physicsScene.grid[i + 1][j + rand].material.id == 0) {
+                                    if (physicsScene.grid[i + 1][j + rand].material.id == 0 || physicsScene.grid[i + 1][j + rand].material.id == 2) {
                                         physicsScene.grid[i][j].kinEnergy = 100;
                                         swapParticles(i + 1, j + rand, i, j);
                                         

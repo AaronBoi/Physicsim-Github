@@ -1,5 +1,5 @@
-var canvas = document.getElementById("myCanvas");
-var c = canvas.getContext("2d");
+let canvas = document.getElementById("myCanvas");
+let c = canvas.getContext("2d");
 window.simMinWidth = 20.0;
 
 function cX(pos) {
@@ -30,10 +30,10 @@ class Vector2 {
         return this;
     }
 
-    addVectors(a, b) {
-        this.x = a.x + b.x;
-        this.y = a.y + b.y;
-        return this;
+    static addVectors(a, b) {
+        let x = a.x + b.x;
+        let y = a.y + b.y;
+        return new Vector2(x, y);
     }
 
     subtract(v, s = 1.0) {
@@ -62,62 +62,71 @@ class Vector2 {
         return this;
     }
 
-    dot(v) {
-        return this.x * v.x + this.y * v.y;
+    static dot(a, b) {
+        let x = a.x * b.x;
+        let y = a.y * b.y;
+        return x + y;
+        //return this.x * v.x + this.y * v.y;
     }
     norm() {
-        var l = this.dist();
+        let l = this.dist();
         if(l != 0) {
             this.x = this.x / l;
             this.y = this.y / l;
         }
         return this;
     }
+    perp() {
+        return new Vector2(-this.y, this.x);
+    }
 }
 
+function closestPointOnLine(pointA, pointB, target) {
+
+    let a = Vector2.subtractVectors(pointB, pointA);
+    let b = Vector2.subtractVectors(target, pointA);
+
+    let ba = a.clone();
+    ba.scale(Vector2.dot(ba.norm(), b));
+    //make it so the the dist has a direction
+    let sign = Math.sign(Vector2.dot(ba, a));
+    let dist = ba.dist() * sign;
+    //clamp the closest point to the line
+    dist = Math.min(Math.max(dist, 0), a.dist());
 
 
-class StaticParticle {
-
-}
-
-class DynamicParticle {
-
-}
-class NonMovingDisk {
-
+    return Vector2.addVectors(pointA, a.norm().scale(dist));
 }
 
 class NonMovingRect {
-    constructor(pos1, pos2, color = "black", fill = true, lineWidth = 6) {
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+    constructor(pos, angle, length, width, color = "black", fill = true, lineWidth = 6) {
+        
+        this.width = width;
+        this.length = length;
+        this.angleVect = new Vector2(Math.cos(angle), Math.sin(angle)).norm();
+        this.positions = [];
+        this.positions.push(pos);
+        this.positions.push(Vector2.addVectors(pos, this.angleVect.clone().scale(length)));
+        this.positions.push(Vector2.addVectors(this.positions[1], this.angleVect.clone().perp().scale(width)));
+        this.positions.push(Vector2.addVectors(pos, this.angleVect.clone().perp().scale(width)));
+    
         this.color = color;
         this.fill = fill;
         this.lineWidth = lineWidth;
+        this.locked = true;
     }
     show() {
-        c.beginPath();
-        c.rect(cX(this.pos1), cY(this.pos1), cX(this.pos2) - cX(this.pos1), cY(this.pos2) - cY(this.pos1));  
-
-        if (this.fill) {
-            c.fillStyle = this.color;
-            c.fill();
-        } 
-        else {
-            c.strokeStyle = this.color;
-            c.lineWidth = this.lineWidth;
-            c.stroke();
-        }
+        drawPolygon(this.positions, this.color, this.fill, this.lineWidth);
     }
 
 }
 
 class Particle {
-    constructor(radius, pos, vel, mass){
+    constructor(radius, pos, vel = new Vector2(0, 0), mass = 10, color = "black"){
         this.locked = false;
         this.radius = radius;
         this.mass = mass;
+        this.color = color;
         this.pos = pos.clone();
         this.vel = vel.clone();
     }
@@ -129,18 +138,82 @@ class Particle {
     addAcc(acc, dt) {
         if(!this.locked) {
             this.vel.add(acc, dt);
+            
         }
     }
     isInside(pos) {
-        
         return this.dist(pos) < this.radius;
-            
-        
     }
-    show() {
-        drawDisc(this);
+    collideWithRect(rect, restitution){
+        let d = new Vector2();
+        let closest = new Vector2();
+        let normal = new Vector2();
+        let minDist = Number.MAX_VALUE;
+        
+        for (let i = 0; i < rect.positions.length; i++) {
+            let a = rect.positions[i];
+            let b =  i + 1 < rect.positions.length ? rect.positions[i + 1] : rect.positions[0];
+            let c = closestPointOnLine(a, b, this.pos);
+            d = Vector2.subtractVectors(this.pos, c);
+            let dist = d.dist();
+            
+            if (dist < minDist) {
+                minDist = dist;
+                closest = c;
+                normal = Vector2.subtractVectors(a, b).perp();
+            }
+        }
+        //  -----------push ball out---------------
+        //drawDisc(closest, 0.5, "red");
+        d = Vector2.subtractVectors(this.pos, closest);
+        let dist = d.dist();
+        if (dist == 0) { 
+            //  if particle is directly on the collision point, point directly outwards
+            d = normal.clone();
+            dist = normal.dist();
+        }
+        d.norm();
+        if (Vector2.dot(d, normal) >= 0) {
+            //  particle is outside of rectangle
+            if (dist > this.radius) return;
+            this.pos.add(d, this.radius - dist);
+        }
+        
+        else {
+            //  particle is inside of rectangle
+            this.pos.add(d, -(dist + this.radius));
+        }
+
+        //  -----------update velocity---------------
+        //d.norm();
+        let r = Vector2.subtractVectors(this.vel, d.scale(2 * Vector2.dot(this.vel, d)));
+        this.vel = r.scale(restitution);
+
+        return;
+
     }
 
+    show() {
+        
+        drawDisc(this.pos, this.radius, this.color);
+    }
+
+}
+
+class LengthConstraint {
+    constructor(part1, part2) {
+        this.part1 = part1;
+        this.part2 = part2;
+        this.dist = part2.pos.dist(part1.pos);
+    }
+    applyConstraint(){
+        let dir = Vector2.subtractVectors(this.part2.pos, this.part1.pos);
+        let d = dir.dist() - this.dist;
+        dir.norm();
+        this.part1.pos.add(dir, 0.99 * d);
+        this.part2.pos.add(dir, 0.99 *-d);
+        //this.part1.pos.add(corr.scale(-1));
+    }
 }
 
 class Spring {
@@ -154,18 +227,18 @@ class Spring {
     }
     calcForce(dt) {
         
-        var dVect = Vector2.subtractVectors(this.part1.pos, this.part2.pos);
+        let dVect = Vector2.subtractVectors(this.part1.pos, this.part2.pos);
         
         //Skalare Kräfte berechnen
-        var d = dVect.dist();
+        let d = dVect.dist();
         
-        var x = d - this.restLength;
-        var localVel = (d - this.lastd) / dt;
-        var springForce = x * this.cSpring;
-        var dampForce = localVel * this.damping;
+        let x = d - this.restLength;
+        let localVel = (d - this.lastd) / dt;
+        let springForce = x * this.cSpring;
+        let dampForce = localVel * this.damping;
         
         //Aus den Kräften einen Kraftvektor bilden
-        var forceVect = dVect.norm().scale(springForce + dampForce);
+        let forceVect = dVect.norm().scale(springForce + dampForce);
 
         //Den Kräfte auf die beiden Teile der Feder anhand deren Masse ausüben
         this.part1.addAcc(forceVect.clone().scale(-1 / this.part1.mass), dt);
@@ -179,28 +252,30 @@ class Spring {
     }
 }
 
-function createWheel(pos, radius, numPtc) {
+function createWheel(pos, radius, numPtc, stiffness) {
 
-    let ptcRad = 0.01;
+    let ptcRad = 0.001;
     let ptcInnitVel = new Vector2(0.0, 0.0);
     let ptcMass = 5;
-    let cSpring = 1500;
+    let cSpring = stiffness;
     let ptcs = [];
 
+    ptcs.push(new Particle(ptcRad, pos, ptcInnitVel, ptcMass));
+
     for (let i = 0; i < numPtc; i++) {
-        var xOffset = Math.sin(i / numPtc * 2 * Math.PI) * radius;
-        var yOffset = Math.cos(i / numPtc * 2 * Math.PI) * radius;
-        var circlePos = new Vector2(xOffset, yOffset).add(pos);
+        let xOffset = Math.sin(i / numPtc * 2 * Math.PI) * radius;
+        let yOffset = Math.cos(i / numPtc * 2 * Math.PI) * radius;
+        let circlePos = new Vector2(xOffset, yOffset).add(pos);
         ptcs.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
     }
-    ptcs.push(new Particle(ptcRad, pos, ptcInnitVel, ptcMass));
+    
 
 
     for (let i = 0; i < ptcs.length; i++) {        
         for (let j = i; j < ptcs.length; j++) {
             
             physicsScene.springs.push(new Spring(ptcs[i], ptcs[j], cSpring)); 
-        
+            
         }
         
     }
@@ -210,36 +285,51 @@ function createWheel(pos, radius, numPtc) {
 
 }
 
+function createWheel2(pos, radius, numPtc, stiffness) {
 
-        
+    let ptcRad = 0.1;
+    let ptcInnitVel = new Vector2(0.0, 0.0);
+    let ptcMass = 5;
+    let cSpring = stiffness;
+    let ptcs = [];
+    let inner = [];
+    let outer = [];
 
-/*
-//custom stuff
-for (let i = 0; i < this.ptcs.length; i++) {  
-    //Inner
-    this.springs.push(new Spring(this.ptcs[i], this.ptcsCenter, this.cSpring));
-    //Outer
-    if (i < this.ptcs.length - 1) this.springs.push(new Spring(this.ptcs[i], this.ptcs[i + 1], this.cSpring));
-    else this.springs.push(new Spring(this.ptcs[i], this.ptcs[0], this.cSpring));
-    
-
-    var rotate = i + Math.floor(this.ptcs.length / 3);
-    if (rotate > this.ptcs.length - 1) {
-        rotate -= this.ptcs.length;
+    for (let i = 0; i < numPtc; i++) {
+        let xOffset = Math.sin(i / numPtc * 2 * Math.PI) * radius;
+        let yOffset = Math.cos(i / numPtc * 2 * Math.PI) * radius;
+        let circlePos = new Vector2(xOffset, yOffset).add(pos);
+        outer.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
+        circlePos = new Vector2(0.7 * xOffset, 0.7 * yOffset).add(pos);
+        inner.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
     }
-    this.springs.push(new Spring(this.ptcs[i], this.ptcs[rotate], this.cSpring));
+    ptcs.push(new Particle(ptcRad, pos, ptcInnitVel, ptcMass));
 
-    var rotate = i + Math.floor(this.ptcs.length * 2/3);
-    if (rotate > this.ptcs.length - 1) {
-        rotate -= this.ptcs.length;
+    for (let i = 0; i < inner.length; i++) {
+        physicsScene.constraints.push(new LengthConstraint(inner[i], ptcs[0]));
+        physicsScene.springs.push(new Spring(inner[i], outer[i], cSpring));
+        if (i < inner.length -1 ) {
+            physicsScene.constraints.push(new LengthConstraint(inner[i], inner[i+1]));
+            physicsScene.springs.push(new Spring(outer[i], outer[i+1], cSpring));  
+        }
+        else {
+            physicsScene.constraints.push(new LengthConstraint(inner[i], inner[0]));
+            physicsScene.springs.push(new Spring(outer[i], outer[0], cSpring));   
+        }
     }
-    this.springs.push(new Spring(this.ptcs[i], this.ptcs[rotate], this.cSpring));
-    
-}*/
+
+    physicsScene.particles.push(...ptcs);
+    physicsScene.particles.push(...inner);
+    physicsScene.particles.push(...outer);
+
+
+}
+
 
 
 function handleWallCollision(ball) 
 {
+    
     if (ball.pos.x <= ball.radius) {
         ball.pos.x = ball.radius;
         ball.vel.x = -ball.vel.x * physicsScene.restitution;
@@ -271,7 +361,7 @@ function resize() {
 }
 
 function getAvarage(arr){
-    var sum = 0;
+    let sum = 0;
     for (let i = 0; i < arr.length; i++) {
         sum += arr[i];
         
@@ -292,14 +382,42 @@ function drawLine(pos1, pos2, thickness = 2, color = 'black') {
     c.stroke();
 }
 
-function drawDisc(particle)
+function drawDisc(pos, radius, color = "black")
 {
+    c.fillStyle = color;
     c.beginPath();			
     c.arc(
-        cX(particle.pos), cY(particle.pos), cScale * particle.radius, 0.0, 2.0 * Math.PI); 
+        cX(pos), cY(pos), cScale * radius, 0.0, 2.0 * Math.PI); 
     c.closePath();
     c.fill();
 }
+
+function drawPolygon(positions, color = 'black', fill = true, thickness = 2) 
+{
+    c.strokeStyle = color;
+    c.lineWidth = thickness;
+    c.beginPath();
+    //c.moveTo(cX(positions[0]), cY(positions[0]));
+
+    for (const pos of positions) {
+        c.lineTo(cX(pos), cY(pos));
+    }
+
+    c.closePath();
+    if (fill) {
+        c.fillStyle = color;
+        c.fill();
+    } 
+    else {
+        c.strokeStyle = color;
+        c.lineWidth = thickness;
+        c.stroke();
+    }
+}
+
+
+let toDegree = radiant => radiant * 180 / Math.PI;
+let toRadiant = degree => degree * Math.PI / 180;
 
 canvas.addEventListener("mousedown", onMouseDown, false);
 canvas.addEventListener("mouseup", onMouseUp, false);
@@ -310,8 +428,8 @@ let heldParticle = null;
 function onMouseDown(event)
 {   
     
-    var rect = canvas.getBoundingClientRect();
-    var mousePos = new Vector2(
+    let rect = canvas.getBoundingClientRect();
+    let mousePos = new Vector2(
         (event.clientX - rect.left) / cScale,
         simHeight - (event.clientY - rect .top) / cScale);
     let closest = 2;
@@ -324,26 +442,43 @@ function onMouseDown(event)
         }
         
     }
+    
     if (heldParticle) heldParticle.locked = true;
 }
 
 function onMouseUp()
 {
 
-    if (heldParticle) heldParticle.locked = false;
+    if (heldParticle) {
+        heldParticle.locked = false;
+        heldParticle.color = "black";
+    }
+    
     heldParticle = null;
     
 }
 
 function onMouseMove(event)
 {   
-    if(heldParticle){
-        var rect = canvas.getBoundingClientRect();
-        var mousePos = new Vector2(
+    if (heldParticle){
+        let rect = canvas.getBoundingClientRect();
+        let mousePos = new Vector2(
             (event.clientX - rect.left) / cScale,
             simHeight - (event.clientY - rect .top) / cScale);
         heldParticle.pos = mousePos;
         heldParticle.vel.scale(0);
+        heldParticle.color = "red";
+        
+    }
+}
+
+//scuffed
+function followMouse(mousePos) {
+    if (heldParticle && mousePos) {
+        let dir = Vector2.subtractVectors(mousePos, heldParticle.pos);
+        heldParticle.addAcc(dir, physicsScene.dt * 10);  
+        requestAnimationFrame(followMouse(mousePos));
+        heldParticle.color = "red";
     }
 }
         
