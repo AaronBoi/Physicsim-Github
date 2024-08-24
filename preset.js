@@ -193,6 +193,35 @@ class Particle {
 
     }
 
+    collideWithParticle(particle, restitution)
+    {
+
+        let dir = Vector2.subtractVectors(particle.pos, this.pos)
+        var d = dir.dist();
+        if (d == 0.0 || d >= this.radius + particle.radius)
+            return;
+
+        dir.scale(1.0 / d);
+
+        let corr = (this.radius + particle.radius - d) / 2.0;
+        this.pos.add(dir, -corr);
+        particle.pos.add(dir, corr);
+
+        let v1 = Vector2.dot(this.vel, dir);
+        let v2 = Vector2.dot(particle.vel, dir);
+        
+        var m1 = this.mass;
+        var m2 = particle.mass;
+
+        
+
+        var newV1 = (m1 * v1 + m2 * v2 - m2 * (v1 - v2) * restitution) / (m1 + m2);
+        var newV2 = (m1 * v1 + m2 * v2 - m1 * (v2 - v1) * restitution) / (m1 + m2);
+
+        this.vel.add(dir, newV1 - v1);
+        particle.vel.add(dir, newV2 - v2);
+    }
+
     show() {
         
         drawDisc(this.pos, this.radius, this.color);

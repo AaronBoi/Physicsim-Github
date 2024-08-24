@@ -26,5 +26,7 @@ public:
 
     static float circleData[10];
     static float quadData[10];
+
+    static void EnableDebug();
     
 };

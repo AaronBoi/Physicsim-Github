@@ -1,7 +1,5 @@
 ﻿  Application.cpp
-  Core.cpp
-  Generating Code...
-glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  PhysicSim1.vcxproj -> C:\Users\aaron\Documents\Programs\Physicsim Github\OpenGL\PhysicSim\x64\Debug\PhysicSim1.exe
+glew32s.lib(glew.obj) : warning LNK4099: PDB "" wurde nicht mit "glew32s.lib(glew.obj)" oder an "" gefunden; Objekt wird verknüpft, als ob keine Debuginformationen vorhanden wären.
+LINK : warning LNK4098: Standardbibliothek "LIBCMT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
+LINK : warning LNK4098: Standardbibliothek "MSVCRT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
+  PhysicSim1.vcxproj -> C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\x64\Debug\PhysicSim1.exe

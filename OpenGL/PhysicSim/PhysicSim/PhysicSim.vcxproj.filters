@@ -21,12 +21,6 @@
     <ClCompile Include="src\VertexBuffer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="src\IndexBuffer.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="src\shader.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="src\VertexArray.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -34,6 +28,15 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="src\Physics.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vector3.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Particle.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,9 +47,6 @@
     <ClInclude Include="Header Files\VertexBuffer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Header Files\shader.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Header Files\VertexArray.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -54,6 +54,15 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Header Files\Physics.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\shader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Vector3.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Header Files\Particle.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -23,6 +23,8 @@ function setupScene()
     //physicsScene.particles.push(new Particle(2, new Vector2(15, 10)));
     //physicsScene.constraints.push(new LengthConstraint(physicsScene.particles[0], physicsScene.particles[1]));
 
+
+
     createWheel(pos, 2, 20, 2000);
     pos.x  +=5;
     createWheel(pos, 2, 20, 2000);
@@ -83,6 +85,10 @@ function simulate(){
             for (let j = 0; j < physicsScene.rect.length; j++) {
                 particle.collideWithRect(physicsScene.rect[j], physicsScene.restitution);
             }
+            //for (let j = 0; j < physicsScene.particles.length; j++) {
+            //    particle.collideWithParticle(physicsScene.particles[j]);
+                
+            //}
         }
     }
     

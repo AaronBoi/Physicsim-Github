@@ -1,50 +1,94 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\",
+  "WorkspaceRootPath": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\USERS\\AARON\\DOCUMENTS\\GITHUB\\PHYSICSIM-GITHUB\\OPENGL\\PHYSICSIM\\DEPENDENCIES\\GLM\\GLM\\DETAIL\\TYPE_VEC3.INL||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:DEPENDENCIES\\GLM\\GLM\\DETAIL\\TYPE_VEC3.INL||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\res\\shaders\\Basic.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\res\\shaders\\Basic.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Physics.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Physics.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Physics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\Header Files\\Physics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Renderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Application.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\Header Files\\Renderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\Header Files\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Core.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Core.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Physics.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Particle.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Physics.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\shader.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\Header Files\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8461A32E-72A0-4DC0-ABB1-AD7665822BB8}|PhysicSim\\PhysicSim.vcxproj|solutionrelative:PhysicSim\\src\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Particle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Vector2.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{FAF41FD1-8AC3-4D7E-BA3E-DC7EC8E6CD37}|PhysicSim1\\PhysicSim1.vcxproj|solutionrelative:PhysicSim1\\src\\Vector2.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\res\\shaders\\Basic.shader||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PhysicSim1\\res\\shaders\\Basic.shader||{3B902123-F8A7-4915-9F01-361F908088D0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -53,149 +97,283 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "DockedWidth": 224,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Core.h",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Core.h",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h",
-              "RelativeToolTip": "PhysicSim1\\src\\Core.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABsAAAAcAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-13T08:25:05.721Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Renderer.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp",
-              "RelativeDocumentMoniker": "PhysicSim\\src\\Renderer.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp",
-              "RelativeToolTip": "PhysicSim\\src\\Renderer.cpp",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-14T19:08:33.339Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Application.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp",
-              "RelativeDocumentMoniker": "PhysicSim\\src\\Application.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp",
-              "RelativeToolTip": "PhysicSim\\src\\Application.cpp",
-              "ViewState": "AQIAADAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-14T19:08:22.545Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Vector2.h",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Vector2.h",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h",
-              "RelativeToolTip": "PhysicSim1\\src\\Vector2.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-13T09:37:56.724Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Vector2.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.cpp",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Vector2.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.cpp",
-              "RelativeToolTip": "PhysicSim1\\src\\Vector2.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-13T09:37:54.938Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Core.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Core.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp",
-              "RelativeToolTip": "PhysicSim1\\src\\Core.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-13T08:24:57.182Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Physics.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Physics.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp",
-              "RelativeToolTip": "PhysicSim1\\src\\Physics.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-08T09:20:21.21Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Physics.h",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Physics.h",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h",
-              "RelativeToolTip": "PhysicSim1\\src\\Physics.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-08T09:19:28.567Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Particle.h",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Particle.h",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h",
-              "RelativeToolTip": "PhysicSim1\\src\\Particle.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-08T09:07:10.957Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Particle.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp",
-              "RelativeDocumentMoniker": "PhysicSim1\\src\\Particle.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp",
-              "RelativeToolTip": "PhysicSim1\\src\\Particle.cpp",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-08T09:06:49.375Z",
+              "Title": "type_vec3.inl",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\Dependencies\\glm\\glm\\detail\\type_vec3.inl",
+              "RelativeDocumentMoniker": "Dependencies\\glm\\glm\\detail\\type_vec3.inl",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\Dependencies\\glm\\glm\\detail\\type_vec3.inl",
+              "RelativeToolTip": "Dependencies\\glm\\glm\\detail\\type_vec3.inl",
+              "ViewState": "AgIAACUAAAAAAAAAAAAhwDkAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2024-08-21T08:41:39.77Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "shader.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\shader.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\shader.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\shader.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\shader.cpp",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-21T08:38:52.36Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Basic.shader",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\res\\shaders\\Basic.shader",
+              "RelativeDocumentMoniker": "PhysicSim\\res\\shaders\\Basic.shader",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\res\\shaders\\Basic.shader",
+              "RelativeToolTip": "PhysicSim\\res\\shaders\\Basic.shader",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-08-21T08:27:21.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Physics.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Physics.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\Physics.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Physics.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\Physics.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-20T19:52:09.75Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Physics.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Physics.h",
+              "RelativeDocumentMoniker": "PhysicSim\\Header Files\\Physics.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Physics.h",
+              "RelativeToolTip": "PhysicSim\\Header Files\\Physics.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:18:52.853Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Particle.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Particle.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\Particle.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Particle.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\Particle.cpp",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-20T19:35:02.522Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Particle.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Particle.h",
+              "RelativeDocumentMoniker": "PhysicSim\\Header Files\\Particle.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Particle.h",
+              "RelativeToolTip": "PhysicSim\\Header Files\\Particle.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:34:16.732Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Application.cpp",
-              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\Application.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Application.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\Application.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-20T19:15:12.961Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Renderer.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Renderer.h",
+              "RelativeDocumentMoniker": "PhysicSim\\Header Files\\Renderer.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Renderer.h",
+              "RelativeToolTip": "PhysicSim\\Header Files\\Renderer.h",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABAAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:31:42.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Renderer.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\Renderer.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Renderer.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\Renderer.cpp",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-20T22:15:28.596Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Vector3.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Vector3.h",
+              "RelativeDocumentMoniker": "PhysicSim\\Header Files\\Vector3.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\Header Files\\Vector3.h",
+              "RelativeToolTip": "PhysicSim\\Header Files\\Vector3.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:33:18.989Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Vector3.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Vector3.cpp",
+              "RelativeDocumentMoniker": "PhysicSim\\src\\Vector3.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim\\src\\Vector3.cpp",
+              "RelativeToolTip": "PhysicSim\\src\\Vector3.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-20T19:33:21.187Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 176,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Physics.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Physics.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.h",
+              "RelativeToolTip": "PhysicSim1\\src\\Physics.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:19:22.39Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "shader.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\shader.cpp",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\shader.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\shader.cpp",
+              "RelativeToolTip": "PhysicSim1\\src\\shader.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-19T15:54:24.631Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Application.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp",
               "RelativeDocumentMoniker": "PhysicSim1\\src\\Application.cpp",
-              "ToolTip": "C:\\Users\\aaron\\Documents\\Programs\\Physicsim Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Application.cpp",
               "RelativeToolTip": "PhysicSim1\\src\\Application.cpp",
-              "ViewState": "AQIAABsAAAAAAAAAAAAAAC4AAAAGAAAA",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAFIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-08-08T09:05:03.242Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Core.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Core.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.h",
+              "RelativeToolTip": "PhysicSim1\\src\\Core.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-19T15:25:08.309Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Core.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Core.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Core.cpp",
+              "RelativeToolTip": "PhysicSim1\\src\\Core.cpp",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-13T08:24:57.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Particle.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Particle.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.cpp",
+              "RelativeToolTip": "PhysicSim1\\src\\Particle.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-08T09:06:49.375Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Physics.cpp",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Physics.cpp",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Physics.cpp",
+              "RelativeToolTip": "PhysicSim1\\src\\Physics.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-08-08T09:20:21.21Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Particle.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Particle.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Particle.h",
+              "RelativeToolTip": "PhysicSim1\\src\\Particle.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-08T09:07:10.957Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Basic.shader",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\res\\shaders\\Basic.shader",
+              "RelativeDocumentMoniker": "PhysicSim1\\res\\shaders\\Basic.shader",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\res\\shaders\\Basic.shader",
+              "RelativeToolTip": "PhysicSim1\\res\\shaders\\Basic.shader",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-08-19T15:55:14.492Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Vector2.h",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h",
+              "RelativeDocumentMoniker": "PhysicSim1\\src\\Vector2.h",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\GitHub\\Physicsim-Github\\OpenGL\\PhysicSim\\PhysicSim1\\src\\Vector2.h",
+              "RelativeToolTip": "PhysicSim1\\src\\Vector2.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-08-20T19:21:50.891Z"
             }
           ]
         }

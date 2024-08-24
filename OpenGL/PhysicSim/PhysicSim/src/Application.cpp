@@ -1,31 +1,18 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+
 #include <iostream>
 
 #include "shader.h"
 #include "VertexBuffer.h"
-#include "IndexBuffer.h"
+
 #include "VertexArray.h"
 #include "Renderer.h"
+#include "Physics.h"
 
-namespace Positions {
 
-    float trianglePositions[] = {
-        -0.1f, -0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
-            0.1f, -0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
-            0.1f,  0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
 
-            0.5f, -0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
-            0.6f, -0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
-            0.6f,  0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
-    };
-
-    float linePositions[] = {
-         -0.5,  0.5, 0.0f, 0.1f, 0.1f, 0.9f, 1.0f,
-          0.5,  0.5, 0.0f, 0.1f, 0.1f, 0.9f, 1.0f,
-    };
-}
 
 int main(void)
 {
@@ -58,24 +45,58 @@ int main(void)
         std::cout << "Error!" << std::endl;
     std::cout << glGetString(GL_VERSION) << std::endl;
 
-    Renderer renderer;
+    Renderer::EnableDebug();
 
+    std::vector<float> testTriangles = {
+        -0.1f, -0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
+        0.1f, -0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
+        0.1f,  0.1f, 0.0f, 0.1f, 0.5f, 0.1f, 1.0f,
 
+        0.5f, -0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
+        0.6f, -0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
+        0.6f,  0.2f, 0.0f, 0.9f, 0.3f, 0.4f, 1.0f,
+    };
+
+    std::vector<float> testLines = {
+        -0.5,  0.5, 0.0f, 0.1f, 0.1f, 0.9f, 1.0f,
+        0.5,  0.5, 0.0f, 0.1f, 0.1f, 0.9f, 1.0f,
+    };
     
+
+    Renderer::pushTriangles(testTriangles);
+    Renderer::pushLines(testLines);
+    
+ 
+    Physics::SetupScene();
+
     VertexArray VAO;
-    VertexBuffer VBO1(Positions::trianglePositions, sizeof(Positions::trianglePositions));
-    VertexBuffer VBO2(Positions::linePositions, sizeof(Positions::linePositions));
+    
+
 
     Shader shader("res/shaders/Basic.shader");
+
+    
+    
 
     // Main while loop
     while (!glfwWindowShouldClose(window))
     {
-        renderer.Clear();
 
-        renderer.DrawTriangles(VAO, VBO1);
-      
-        renderer.DrawLines(VAO, VBO2);
+        Renderer::Clear();
+        //Physics::particles[0].rgbt.G += 0.001;
+        for (int i = 0; i < Physics::particles.size(); i++)
+        {
+
+            Physics::particles[i].Simulate(Physics::dt);
+            Physics::particles[i].Draw();
+
+        }
+
+        VertexBuffer VBO1(Renderer::triangles.data(), Renderer::triangles.size() * sizeof(float));
+        VertexBuffer VBO2(Renderer::lines.data(), Renderer::lines.size() * sizeof(float));
+
+        Renderer::DrawTriangles(VAO, VBO1);
+        Renderer::DrawLines(VAO, VBO2);
 
         /* Swap Buffers and poll IO events */
         glfwSwapBuffers(window);

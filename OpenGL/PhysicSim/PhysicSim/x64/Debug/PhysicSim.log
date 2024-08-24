@@ -1,11 +1,22 @@
-﻿  Application.cpp
-  IndexBuffer.cpp
-  Physics.cpp
-C:\Users\aaron\Documents\Programs\Physicsim Github\OpenGL\PhysicSim\PhysicSim\src\Application.cpp(8,10): error C1083: Cannot open include file: 'IndexBuffer.h': No such file or directory
-  Renderer.cpp
-/src/IndexBuffer.cpp(1,1): error C1083: Cannot open source file: 'src\IndexBuffer.cpp': No such file or directory
-C:\Users\aaron\Documents\Programs\Physicsim Github\OpenGL\PhysicSim\PhysicSim\Header Files\Renderer.h(4,10): error C1083: Cannot open include file: 'IndexBuffer.h': No such file or directory
-  shader.cpp
-  VertexArray.cpp
-  VertexBuffer.cpp
-  Generating Code...
+﻿  shader.cpp
+C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7): error C2440: "static_cast": "Z" kann nicht in "float" konvertiert werden
+C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7): error C2440:         with
+C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7): error C2440:         [
+C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7): error C2440:             Z=glm::vec<3,float,glm::packed_highp>
+C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7): error C2440:         ]
+  (Quelldatei „src/shader.cpp“ wird kompiliert)
+      C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7):
+      Kein benutzerdefinierter Konvertierungsoperator verfügbar, der diese Konvertierung durchführen kann, oder der Operator kann nicht aufgerufen werden
+      C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\Dependencies\glm\glm\detail\type_vec3.inl(58,7):
+      der Vorlageninstanziierungskontext (der älteste zuerst) ist
+          C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\PhysicSim\src\shader.cpp(13,72):
+          Siehe Verweis auf die gerade kompilierte Instanziierung "glm::vec<3,float,glm::packed_highp>::vec<float,float,glm::vec<3,float,glm::packed_highp>>(X,Y,Z)" der Funktions-Vorlage.
+          with
+          [
+              X=float,
+              Y=float,
+              Z=glm::vec<3,float,glm::packed_highp>
+          ]
+              C:\Users\aaron\Documents\GitHub\Physicsim-Github\OpenGL\PhysicSim\PhysicSim\src\shader.cpp(13,36):
+              Ersten Verweis auf "glm::vec<3,float,glm::packed_highp>::vec" in "transform" anzeigen
+  

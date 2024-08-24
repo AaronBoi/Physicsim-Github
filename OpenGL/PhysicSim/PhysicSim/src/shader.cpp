@@ -2,6 +2,21 @@
 #include<iostream>
 #include <fstream>
 #include <sstream>
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
+
+
+static glm::mat4 transform(glm::vec2 const& Orientation, glm::vec3 const& Translate, glm::vec3 const& Up)
+{
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 10.f);
+    glm::mat4 ViewTranslate = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
+    glm::mat4 ViewRotateX = glm::rotate(ViewTranslate, Orientation.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+    glm::mat4 View = glm::rotate(ViewRotateX, Orientation.x, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 Model = glm::mat4(1.0f);
+    return Projection * View * Model;
+    //glUniformMatrix4fv(LocationMVP, 1, GL_FALSE, glm::value_ptr(MVP));
+}
 
 Shader::Shader(const std::string& filepath)
     : m_RendererID(0)
@@ -9,6 +24,14 @@ Shader::Shader(const std::string& filepath)
     ShaderProgramSource source = parseShader(filepath);
     m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
     Bind();
+
+    glm::vec2 orientation = { 0.0, 0.0 };
+    glm::vec3 translate = { 0.0, 0.0, 0.0 };
+    glm::vec3 up = { 0.0, 0.0, 0.0 };
+
+    glm::mat4 MVP = transform(orientation, translate, up);
+    GLint modelMatrixLocation = glGetUniformLocation(m_RendererID, "modelMatrix");
+    glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(MVP));
     
 }
 

@@ -141,12 +141,14 @@
     <ClCompile Include="src\Core.cpp" />
     <ClCompile Include="src\Particle.cpp" />
     <ClCompile Include="src\Physics.cpp" />
+    <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\Particle.h" />
     <ClInclude Include="src\Physics.h" />
+    <ClInclude Include="src\shader.h" />
     <ClInclude Include="src\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
