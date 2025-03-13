@@ -11,6 +11,7 @@ var physicsScene =
     wheels: [],
     rect : [],
     constraints : [],
+    angularSprings: [],
 };
 
 function setupScene() 
@@ -25,9 +26,9 @@ function setupScene()
 
 
 
-    createWheel(pos1, 2, 15, 2000);
-    createWheel(pos2, 2, 15, 2000);
-    createLine(pos1, pos2, 10, 2000);
+    createWheel3(pos1, 2, 15, 2000);
+    createWheel3(pos2, 2, 15, 2000);
+    //createLine(pos1, pos2, 10, 2000);
     
     //physicsScene.constraints.push(new LengthConstraint(physicsScene.particles[0], physicsScene.particles[21]));
     //createWheel2(pos, 1, 20, 100);
@@ -91,6 +92,9 @@ function simulate(){
             //    particle.collideWithParticle(physicsScene.particles[j]);
                 
             //}
+        }
+        for (const aSpring of physicsScene.angularSprings) {
+            aSpring.calcForce(dt);
         }
     }
     

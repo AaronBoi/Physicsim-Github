@@ -289,7 +289,7 @@ class Spring {
 
 class AngularSpring {
     constructor(part1, part2, part3, cSpring) {
-        this.cSpring = cSpring;
+        this.cSpring = cSpring /50;
         this.part1 = part1;
         this.part2 = part2;
         this.part3 = part3;
@@ -307,11 +307,13 @@ class AngularSpring {
         let p3 = v3.clone().perpL().norm();
         let f1 = p1.clone().scale(-force * v1.dist());
         let f3 = p3.clone().scale(force * v3.dist());
-
+        let fRes = Vector2.addVectors(f1, f3).scale(-1);
+        
         this.part1.addAcc(f1, dt);
         this.part3.addAcc(f3, dt);
-        drawDisc(Vector2.addVectors(this.part1.pos, f1), .1);
-        drawDisc(Vector2.addVectors(this.part3.pos, f3), .1);
+        this.part2.addAcc(fRes, dt);
+        //drawDisc(Vector2.addVectors(this.part1.pos, f1), .1);
+        //drawDisc(Vector2.addVectors(this.part3.pos, f3), .1);
     }
 }
 
@@ -332,6 +334,7 @@ function createWheel(pos, radius, numPtc, stiffness) {
         ptcs.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
     }
     
+    //Add Springs
     for (let i = 0; i < ptcs.length; i++) {        
         for (let j = i; j < ptcs.length; j++) {
             
@@ -412,6 +415,54 @@ function createWheel2(pos, radius, numPtc, stiffness) {
 
 }
 
+//approach with angular springs
+function createWheel3(pos, radius, numPtc, stiffness) {
+
+    let ptcRad = 0.07;
+    let ptcInnitVel = new Vector2(0.0, 0.0);
+    let ptcMass = 5;
+    let cSpring = stiffness;
+    let ptcs = [];
+
+    //ptcs.push(new Particle(ptcRad, pos, ptcInnitVel, ptcMass));
+
+    for (let i = 0; i < numPtc; i++) {
+        let xOffset = Math.sin(i / numPtc * 2 * Math.PI) * radius;
+        let yOffset = Math.cos(i / numPtc * 2 * Math.PI) * radius;
+        let circlePos = new Vector2(xOffset, yOffset).add(pos);
+        ptcs.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
+    }
+    
+    //Add Springs
+    for (let i = 0; i < ptcs.length - 1; i++) {     
+        
+        physicsScene.springs.push(new Spring(ptcs[i], ptcs[i + 1], cSpring)); 
+        if(i == ptcs.length - 2) {
+            physicsScene.springs.push(new Spring(ptcs[i + 1], ptcs[0], cSpring)); 
+            continue;
+        }
+        
+    }
+
+    //Add AngularSprings
+    for (let i = 0; i < ptcs.length - 2; i++) {     
+              
+        physicsScene.angularSprings.push(new AngularSpring(ptcs[i], ptcs[i + 1], ptcs[i + 2], cSpring));
+
+        if(i == ptcs.length - 3) {
+            physicsScene.angularSprings.push(new AngularSpring(ptcs[i], ptcs[i + 1], ptcs[0], cSpring));
+       
+        }
+
+        if(i == ptcs.length - 2) {
+            physicsScene.angularSprings.push(new AngularSpring(ptcs[i], ptcs[0], ptcs[1], cSpring));
+           
+        }
+        
+    }
+
+    physicsScene.particles.push(...ptcs);
+}
 
 
 function handleWallCollision(ball) 
@@ -507,7 +558,11 @@ function getAngle(p1, p2, p3)
 {
     let v1 = Vector2.subtractVectors(p2, p1);
     let v2 = Vector2.subtractVectors(p2, p3);
-    return toDegree(Math.atan2(v2.y*v1.x-v2.x*v1.y,Vector2.dot(v1,v2)));
+    let deg = toDegree(Math.atan2(v2.y*v1.x-v2.x*v1.y,Vector2.dot(v1,v2)))
+    if (Math.sign(deg) == -1) {
+        deg = deg + 360;
+    }
+    return deg;
     let sign = Math.sign(Math.asin(Vector2.cross(v1, v2)/(v1.dist()*v2.dist())));
     if (!sign) sign = 1;
     return toDegree(Math.acos(Vector2.dot(v1, v2)/(v1.dist()*v2.dist()))) //* sign;

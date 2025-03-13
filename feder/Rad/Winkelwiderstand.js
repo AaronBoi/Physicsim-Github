@@ -17,16 +17,16 @@ var physicsScene =
 function setupScene() 
 {
     resize();
-    cSpring = 100;
-    pos1 = new Vector2(10, 10);
+    cSpring = 1000;
+    pos1 = new Vector2(13, 5);
     pos2 = new Vector2(15, 10);
-    pos3 = new Vector2(20,10);
+    pos3 = new Vector2(17,5);
     physicsScene.particles.push(new Particle(0.5, pos1));
     physicsScene.particles.push(new Particle(.5, pos2));
     physicsScene.particles.push(new Particle(.5, pos3));
     physicsScene.springs.push(new Spring(physicsScene.particles[0], physicsScene.particles[1], cSpring)); 
     physicsScene.springs.push(new Spring(physicsScene.particles[1], physicsScene.particles[2], cSpring)); 
-    physicsScene.angularSprings.push(new AngularSpring(physicsScene.particles[0], physicsScene.particles[1], physicsScene.particles[2],0.5));
+    physicsScene.angularSprings.push(new AngularSpring(physicsScene.particles[0], physicsScene.particles[1], physicsScene.particles[2], cSpring/10));
 
     physicsScene.rect.push(new NonMovingRect(new Vector2(0, 0), toRadiant(0), window.simWidth, 1, "gray"));
 
@@ -61,7 +61,7 @@ function draw()
 
 
 //simulation
-var numSteps = 3;
+var numSteps = 10;
 function simulate(){
 
     c.clearRect(0, 0, canvas.width, canvas.height);
@@ -73,24 +73,24 @@ function simulate(){
         }
         
         for (const spring of physicsScene.springs) {
-            //spring.calcForce(dt);
+            spring.calcForce(dt);
         }
         for (const particle of physicsScene.particles) {
             if (physicsScene.gravity) {
-                //particle.addAcc(physicsScene.gravity, dt);
+                particle.addAcc(physicsScene.gravity, dt);
             }
             particle.simulate(dt);
 
             for (let j = 0; j < physicsScene.rect.length; j++) {
                 particle.collideWithRect(physicsScene.rect[j], physicsScene.restitution);
             }
-            //for (let j = 0; j < physicsScene.particles.length; j++) {
-            //    particle.collideWithParticle(physicsScene.particles[j]);
+            for (let j = 0; j < physicsScene.particles.length; j++) {
+                //particle.collideWithParticle(physicsScene.particles[j]);
                 
-            //}
+            }
         }
         for (const aSpring of physicsScene.angularSprings) {
-            //aSpring.calcForce(dt);
+            aSpring.calcForce(dt);
         }
         
     }
@@ -120,7 +120,7 @@ function update(){
         document.getElementById("Performance").innerHTML = getAvarage(timeArr);
     }
     
-    console.log(getAngle(physicsScene.particles[0].pos,physicsScene.particles[1].pos,physicsScene.particles[2].pos));
+      //console.log(getAngle(physicsScene.particles[0].pos,physicsScene.particles[1].pos,physicsScene.particles[2].pos));
 
     requestAnimationFrame(update);
 }
