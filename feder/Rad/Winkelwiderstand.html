@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>Winkelwiderstand</title>
+
+        <style>
+            .table{
+                display: flex;
+                flex-direction: row;
+                margin: 5px;
+            }
+            .section{
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                margin: 10px;
+            }
+            .button {
+				background-color: #606060;
+				border: none;
+				color: white;
+				padding: 10px 32px;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+        </style>
+    </head>   
+
+
+
+    <body onresize="resize()">
+
+        <button class="button" onclick="setupScene()">Reset</button>
+        ms per Frame : <t id = "Performance"></t>
+        <br>
+        <canvas id="myCanvas" style="border:2px solid"></canvas>   
+
+        <script src="../../preset.js"></script>
+        <script src="Winkelwiderstand.js"></script>
+        
+
+    </body>
+
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <head>
+        <title>Cluster - Performance</title>
+        <style>
+			body {
+				font-family: verdana; 
+				font-size: 15px;
+                
+			}			
+			.button {
+				background-color: #606060;
+				border: none;
+				color: white;
+				padding: 10px 32px;
+				font-size: 16px;
+				margin: 4px 2px;
+				cursor: pointer;
+			}
+            .canvas-wrapper {
+                display: flex;
+            }
+            .chart1-container{
+                width: 100vw;
+                height: 40vh;
+                background-color: #ffffff;
+                border-radius: 10px;
+                padding: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+            }
+            canvas {
+                display: block;
+            }
+        </style>
+    </head>   
+
+    <body>
+        Restitution <input type = "range" min = "0" max = "10" value = "10" id = "restitutionSlider" class = "slider">
+        <div>
+            test : <t id ="test"></t>
+        </div>
+        <div>
+            <t id ="ms"></t> ms per frame
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="myCanvas" style="border:2px solid"></canvas>
+            <div class="chart1-container">
+                <canvas id="Chart1"></canvas>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="./normal_distribution.js"></script>            
+    </body>
+</html>

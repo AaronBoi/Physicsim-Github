@@ -4,7 +4,7 @@ var physicsScene =
 {
     gravity : new Vector2(0.0, -9,81),
     dt : 1.0 / 75,
-    restitution : 0.1,
+    restitution : 0.9,
     //paused: false,
     particles: [],
     springs: [],
@@ -17,17 +17,18 @@ function setupScene()
 {
     resize();
     
-    pos = new Vector2(10, 10);
-
+    pos1 = new Vector2(10, 10);
+    pos2 = new Vector2(15, 10);
     //physicsScene.particles.push(new Particle(2, new Vector2(5, 10)));
     //physicsScene.particles.push(new Particle(2, new Vector2(15, 10)));
     //physicsScene.constraints.push(new LengthConstraint(physicsScene.particles[0], physicsScene.particles[1]));
 
 
 
-    createWheel(pos, 2, 20, 2000);
-    pos.x  +=5;
-    createWheel(pos, 2, 20, 2000);
+    createWheel(pos1, 2, 15, 2000);
+    createWheel(pos2, 2, 15, 2000);
+    createLine(pos1, pos2, 10, 2000);
+    
     //physicsScene.constraints.push(new LengthConstraint(physicsScene.particles[0], physicsScene.particles[21]));
     //createWheel2(pos, 1, 20, 100);
 
@@ -37,6 +38,7 @@ function setupScene()
     physicsScene.rect.push(new NonMovingRect(new Vector2(window.simWidth - 1, 0), toRadiant(0), 1, window.simHeight, "gray"));
     physicsScene.rect.push(new NonMovingRect(new Vector2(0, 0), toRadiant(5), window.simWidth, 1, "gray"));
     physicsScene.rect.push(new NonMovingRect(new Vector2(0, 0), toRadiant(60), 10, 1, "gray"));
+    console.log(physicsScene.particles)
 }
 
 //drawing----------------------------------

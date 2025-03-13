@@ -76,8 +76,14 @@ class Vector2 {
         }
         return this;
     }
-    perp() {
+    perpL() {
         return new Vector2(-this.y, this.x);
+    }
+    perpR() {
+        return new Vector2(-this.y, this.x);
+    }
+    static cross(a, b) {
+        return a.x * b.y - a.y * b.x;
     }
 }
 
@@ -107,8 +113,8 @@ class NonMovingRect {
         this.positions = [];
         this.positions.push(pos);
         this.positions.push(Vector2.addVectors(pos, this.angleVect.clone().scale(length)));
-        this.positions.push(Vector2.addVectors(this.positions[1], this.angleVect.clone().perp().scale(width)));
-        this.positions.push(Vector2.addVectors(pos, this.angleVect.clone().perp().scale(width)));
+        this.positions.push(Vector2.addVectors(this.positions[1], this.angleVect.clone().perpL().scale(width)));
+        this.positions.push(Vector2.addVectors(pos, this.angleVect.clone().perpL().scale(width)));
     
         this.color = color;
         this.fill = fill;
@@ -160,7 +166,7 @@ class Particle {
             if (dist < minDist) {
                 minDist = dist;
                 closest = c;
-                normal = Vector2.subtractVectors(a, b).perp();
+                normal = Vector2.subtractVectors(a, b).perpL();
             }
         }
         //  -----------push ball out---------------
@@ -281,6 +287,34 @@ class Spring {
     }
 }
 
+class AngularSpring {
+    constructor(part1, part2, part3, cSpring) {
+        this.cSpring = cSpring;
+        this.part1 = part1;
+        this.part2 = part2;
+        this.part3 = part3;
+        this.restAngle = getAngle(this.part1.pos, this.part2.pos, this.part3.pos);
+        this.lastA = this.restAngle;
+        
+    }
+    calcForce(dt)
+    {
+        let angle = getAngle(this.part1.pos, this.part2.pos, this.part3.pos);
+        let force = Math.pow((this.restAngle - angle),1) * this.cSpring;
+        let v1 = Vector2.subtractVectors(this.part1.pos, this.part2.pos);
+        let v3 = Vector2.subtractVectors(this.part3.pos, this.part2.pos);
+        let p1 = v1.clone().perpL().norm();
+        let p3 = v3.clone().perpL().norm();
+        let f1 = p1.clone().scale(-force * v1.dist());
+        let f3 = p3.clone().scale(force * v3.dist());
+
+        this.part1.addAcc(f1, dt);
+        this.part3.addAcc(f3, dt);
+        drawDisc(Vector2.addVectors(this.part1.pos, f1), .1);
+        drawDisc(Vector2.addVectors(this.part3.pos, f3), .1);
+    }
+}
+
 function createWheel(pos, radius, numPtc, stiffness) {
 
     let ptcRad = 0.001;
@@ -298,8 +332,6 @@ function createWheel(pos, radius, numPtc, stiffness) {
         ptcs.push(new Particle(ptcRad, circlePos, ptcInnitVel, ptcMass));
     }
     
-
-
     for (let i = 0; i < ptcs.length; i++) {        
         for (let j = i; j < ptcs.length; j++) {
             
@@ -310,8 +342,34 @@ function createWheel(pos, radius, numPtc, stiffness) {
     }
 
     physicsScene.particles.push(...ptcs);
+}
 
+function createLine(startPos, endPos, numPtc, stiffness) {
 
+    let ptcRad = 0.05;
+    let ptcInnitVel = new Vector2(0.0, 0.0);
+    let ptcMass = 5;
+    let ptcs = [];
+
+    let dir = Vector2.subtractVectors(endPos, startPos);
+    let dist = dir.dist() / numPtc;
+    dir = dir.norm();
+    
+    for (let i = 0; i < numPtc; i++) {
+        let ptcPos = startPos.clone().add(dir, dist * i);
+        ptcs.push(new Particle(ptcRad, ptcPos, ptcInnitVel, ptcMass));
+    }
+    
+    for (let i = 0; i < ptcs.length; i++) {        
+        for (let j = i; j < ptcs.length; j++) {
+            
+            physicsScene.springs.push(new Spring(ptcs[i], ptcs[j], stiffness)); 
+            
+        }
+        
+    }
+
+    physicsScene.particles.push(...ptcs);
 }
 
 function createWheel2(pos, radius, numPtc, stiffness) {
@@ -443,6 +501,19 @@ function drawPolygon(positions, color = 'black', fill = true, thickness = 2)
         c.stroke();
     }
 }
+
+
+function getAngle(p1, p2, p3)
+{
+    let v1 = Vector2.subtractVectors(p2, p1);
+    let v2 = Vector2.subtractVectors(p2, p3);
+    return toDegree(Math.atan2(v2.y*v1.x-v2.x*v1.y,Vector2.dot(v1,v2)));
+    let sign = Math.sign(Math.asin(Vector2.cross(v1, v2)/(v1.dist()*v2.dist())));
+    if (!sign) sign = 1;
+    return toDegree(Math.acos(Vector2.dot(v1, v2)/(v1.dist()*v2.dist()))) //* sign;
+    
+}
+
 
 
 let toDegree = radiant => radiant * 180 / Math.PI;
