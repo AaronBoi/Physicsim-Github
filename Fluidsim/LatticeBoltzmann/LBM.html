@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+        <title>LBM</title>
+        <style>
+        body {
+            font-family: verdana;
+            font-size: 15px;
+        }
+        </style>
+    </head>   
+
+
+
+    <body>
+        <h1>Lattice Boltzmann Method Simulation</h1>
+        <button id = "buttonRun" onclick="run()">Run</button>
+        <button onclick="restart()">Restart</button>
+
+        <br><br>
+        <div id="container"></div>
+
+        <script src="https://unpkg.com/three@0.139.2/build/three.min.js"></script>
+        <script src="https://unpkg.com/three@0.139.2/examples/js/controls/OrbitControls.js"></script>
+        <script src="LBM.js"></script>
+    </body>
+
+	
+
+</html>

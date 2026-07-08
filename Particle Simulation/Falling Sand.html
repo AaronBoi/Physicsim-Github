@@ -27,7 +27,7 @@
 
 
         //physics scene----------------------------
-
+            
         var physicsScene = 
         {
             dt : 1.0 / 75,
@@ -79,8 +79,11 @@
 
         //simulation-------------------------------
         
+      
+
         function simulate(dt) 
         {
+
             //var oldGrid = physicsScene.grid; //Funny
             var oldGrid = structuredClone(physicsScene.grid);
             
