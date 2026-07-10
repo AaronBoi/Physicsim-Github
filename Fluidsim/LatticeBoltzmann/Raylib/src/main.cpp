@@ -13,6 +13,7 @@ using namespace std::chrono;
 
 void CustomTraceLog(int msgType, const char *text, va_list args)
 {
+    return;
     char timeStr[64] = { 0 };
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
@@ -51,8 +52,8 @@ constexpr int screenWidth = 1200;
 constexpr int screenHeight = 900;
 
 const float dt = 1.0 / 60;
-const int width = 300; //num of cells
-const int heigth = 150; //num of cells
+const int width = 150; //num of cells
+const int heigth = 100; //num of cells
 const int cellSize = 1 * screenWidth/width;
 
 //float c = gridsize / dt;
@@ -107,7 +108,7 @@ void init()
     spawnCylinder(); 
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator(seed);
-    normal_distribution<double> distribution(0.0, 1.0);
+    normal_distribution<float> distribution(0.0, 1.0);
 
     const float ux = 0.15f;
     const float uy = 0.0f;
@@ -193,7 +194,7 @@ void computeMacroskopic()
                 u_arr[x][y][1] += e_arr[i][1] * c * n_arr[x][y][i];
             }
 
-            if (rho_arr[x][y] == 0)
+            if (rho_arr[x][y] <= 0)
                 cout << "uh oh, rho = 0" << endl;
             
             u_arr[x][y][0] /= rho_arr[x][y];
@@ -302,7 +303,9 @@ void streaming()
 
 float abs_u_arr[width][heigth];
 float max_u = 0;
-void DrawSpeedAsColor() {
+Color pixels[width*heigth];
+
+Texture2D CalculatePixels() {
     auto start = high_resolution_clock::now();
     
     for (int x = 0; x < width; x++) {
@@ -317,12 +320,16 @@ void DrawSpeedAsColor() {
 
     for (int x = 0; x < width; x++) {
 		for (int y = 0; y < heigth; y++) {
-            Color color = ColorFromHSV(abs_u_arr[x][y]/max_u*360.0f, 1, 1);
-            DrawPixel(x, y, color);
+            pixels[x + width * y] = ColorFromHSV(abs_u_arr[x][y]/max_u*360.0f, 1, 1);
         }
     }
+    Image screenImage = { .data = pixels, .width = width, .height = heigth, .mipmaps = 1, .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
+    Texture2D texture = LoadTextureFromImage(screenImage);
+
     auto stop = high_resolution_clock::now();
     timings[4] = duration_cast<chrono::microseconds>(stop - start).count();
+
+    return texture;
 }
 
 void DrawDensityAsColor()
@@ -358,7 +365,7 @@ void DrawArrow(float posX, float posY, float length, float rotation = 0.0)
     float headLength = length / 3;
     //DrawTriangle({100, 100}, {75,150}, {125, 150}, BLACK);
     //DrawTriangle({endPosX - sin(rotation) * 10 , endPosY + cos(rotation) * 10}, {endPosX + cos(rotation)*10, endPosY + sin(rotation)*10},  {endPosX + sin(rotation) * 10, endPosY - cos(rotation) * 10}, BLACK);
-    DrawTriangle({endPosX - sin(rotation) * headWidth - cos(rotation) * headLength, endPosY + cos(rotation) * headWidth - sin(rotation) * headLength}, {endPosX, endPosY},  {endPosX + sin(rotation) * headWidth - cos(rotation) * headLength, endPosY - cos(rotation) * headWidth - sin(rotation) * headLength}, BLACK);
+    DrawTriangle({(float)(endPosX - sin(rotation) * headWidth - cos(rotation) * headLength), (float)(endPosY + cos(rotation) * headWidth - sin(rotation) * headLength)}, {(float)endPosX, (float)endPosY},  {(float)(endPosX + sin(rotation) * headWidth - cos(rotation) * headLength), (float)(endPosY - cos(rotation) * headWidth - sin(rotation) * headLength)}, BLACK);
     DrawLine(posX, posY, endPosX, endPosY, BLACK);
 
 }
@@ -420,30 +427,27 @@ int main()
 
     //cout << n_arr[0][0][0] << endl;
     //update
-    RenderTexture2D target = LoadRenderTexture(width, heigth);
 
     int i = 0;
     while (!WindowShouldClose())
     {        
         //rotation += PI /180;
-        for (int x = 0; x < 10; x++) {
+        for (int x = 0; x < 1; x++) {
             streaming();
             collision();
         }
-    
-        BeginTextureMode(target);
-            ClearBackground(WHITE);
-            DrawSpeedAsColor();
-        EndTextureMode();
+        
+        Texture2D texture = CalculatePixels();
+
 
         BeginDrawing();
             ClearBackground(WHITE);
             //DrawDensityAsColor();
-
+            
             DrawTexturePro(
-                target.texture,
-                (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height }, 
-                (Rectangle){ 0, 0, (float)target.texture.width*cellSize, (float)target.texture.height*cellSize },
+                texture,
+                (Rectangle){ 0, 0, (float)texture.width, (float)texture.height }, 
+                (Rectangle){ 0, 0, (float)texture.width*cellSize, (float)texture.height*cellSize },
                 (Vector2) { 0, 0 }, 0, WHITE);
 
             //DrawVelocityFieldVectors();
@@ -467,7 +471,7 @@ int main()
             }
         }
         
-        printf("\rTimings: collision(%d), makros(%d), streaming(%d), drawSpeed(%d)", timings[0], timings[1], timings[3], timings[4]);
+        printf("\rTimings: collision(%d), makros(%d), streaming(%d), drawSpeed(%d)       ", timings[0], timings[1], timings[3], timings[4]);
         fflush(stdout);
         
         //DrawCircle(100, 100, 40, RED);
