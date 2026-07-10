@@ -8,6 +8,7 @@
 #include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 
 void CustomTraceLog(int msgType, const char *text, va_list args)
@@ -41,6 +42,9 @@ float dot_product(float arr1[], float arr2[], int dim)
 	return sum;
 }
 
+float magnitude(float x, float y) {
+    return sqrt(x*x+y*y);
+}
 
 
 constexpr int screenWidth = 1200;
@@ -76,6 +80,9 @@ float rho_arr[width][heigth];
 float u_arr[width][heigth][2];
 
 bool wall_arr[width][heigth];
+float pixels[width][heigth];
+
+int timings[10];
 
 void spawnCylinder()
 {
@@ -202,6 +209,8 @@ void applyBoundaryConditions()
 
 void computeMacroskopic()
 {
+    auto start = high_resolution_clock::now();
+
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
             
@@ -227,11 +236,14 @@ void computeMacroskopic()
             u_arr[x][y][1] /= rho_arr[x][y];
         }
     }
-    return;
+
+    auto stop = high_resolution_clock::now();
+    timings[1] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void collision()
 {   
+    auto start = high_resolution_clock::now();
     applyBoundaryConditions();
     computeMacroskopic();
     
@@ -272,10 +284,14 @@ void collision()
             }
         }
     }
+
+    auto stop = high_resolution_clock::now();
+    timings[0] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void streaming()
 {
+    auto start = high_resolution_clock::now();
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
@@ -314,38 +330,45 @@ void streaming()
         }
     }
 
+    memcpy(n_arr, n_temp, sizeof(n_arr));
+    
+    auto stop = high_resolution_clock::now();
+    timings[3] = duration_cast<chrono::microseconds>(stop - start).count();
+}
+
+float abs_u_arr[width][heigth];
+float max_u = 0;
+
+void UpdatePixels() {
+    auto start = high_resolution_clock::now();
+    
     for (int x = 0; x < width; x++) {
-        for (int y = 0; y < heigth; y++) {
-            for (int i = 0; i < dims; i++) {
-                n_arr[x][y][i] = n_temp[x][y][i];
+		for (int y = 0; y < heigth; y++) {
+            abs_u_arr[x][y] = magnitude(u_arr[x][y][0], u_arr[x][y][1]);
+            if (abs_u_arr[x][y] > max_u)
+            {
+                max_u = abs_u_arr[x][y];
             }
+
+            pixels[x][y] = abs_u_arr[x][y]/max_u*360.0f;
         }
     }
+    auto stop = high_resolution_clock::now();
+    timings[4] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void DrawSpeedAsColor()
 {
-    float abs_u_arr[width][heigth];
-    float max = 0;
+    auto start = high_resolution_clock::now();
     for (int x = 0; x < width; x++) {
 		for (int y = 0; y < heigth; y++) {
-            abs_u_arr[x][y] = sqrt(dot_product(u_arr[x][y], u_arr[x][y], 2));
-            if (abs_u_arr[x][y] > max)
-            {
-                max = abs_u_arr[x][y];
-            }
-        }
-    }
-    if (max == 0)
-        return;
-    
-    for (int x = 0; x < width; x++) {
-		for (int y = 0; y < heigth; y++) {
-            Color color = ColorFromHSV(abs_u_arr[x][y]/max*360, 1, 1);
+            Color color = ColorFromHSV(pixels[x][y], 1, 1);
             DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, color);
         }
     }
-    return;
+
+    auto stop = high_resolution_clock::now();
+    timings[5] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void DrawDensityAsColor()
@@ -395,7 +418,6 @@ void DrawVelocityFieldVectors()
             abs_u_arr[x][y] = sqrt(pow(u_arr[x][y][0], 2) + pow(u_arr[x][y][1], 2));
             if (abs_u_arr[x][y] > max)
                 max = abs_u_arr[x][y];
-            
         }
     }
     if (max == 0)
@@ -431,7 +453,6 @@ int main()
     //screen setup
     
     InitWindow(screenWidth, screenHeight, "LBM");
-    SetTargetFPS(180);
     SetTraceLogCallback(CustomTraceLog);
     
     //cout << dot_product(w_arr, w_arr, sizeof(w_arr)/sizeof(*w_arr)) << endl;
@@ -446,24 +467,28 @@ int main()
     //update
     int i = 0;
     while (!WindowShouldClose())
-    {
+    {        
         //rotation += PI /180;
         streaming();
         collision();
         
-        if (i % 10 == 0)
+        if (i % 1 == 0)
         {
-            BeginDrawing();
-            ClearBackground(WHITE);
-            DrawSpeedAsColor();
-            //DrawDensityAsColor();
-
-            //DrawVelocityFieldVectors();
-            DrawWall();
-
-            EndDrawing();
-            
+            UpdatePixels();
         }
+
+        BeginDrawing();
+        ClearBackground(WHITE);
+        DrawSpeedAsColor();
+        //DrawDensityAsColor();
+
+        //DrawVelocityFieldVectors();
+        DrawWall();
+
+        DrawText(TextFormat("%d fps", GetFPS()), 10, screenHeight - 20, 20, BLACK);
+
+        EndDrawing();
+            
         
         Vector2 mouse_pos = GetMousePosition();
         Vector2 mouse_index = {floor(mouse_pos.x / cellSize), floor(mouse_pos.y / cellSize)};
@@ -479,7 +504,8 @@ int main()
             }
         }
         
-        
+        printf("\rTimings: collision(%d), makros(%d), streaming(%d), updatePx(%d), drawSpeed(%d)", timings[0], timings[1], timings[3], timings[4], timings[5]);
+        fflush(stdout);
         
         //DrawCircle(100, 100, 40, RED);
         
