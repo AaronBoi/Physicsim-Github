@@ -8,9 +8,12 @@
 #include <raymath.h>
 
 using namespace std;
+using namespace std::chrono;
+
 
 void CustomTraceLog(int msgType, const char *text, va_list args)
 {
+    return;
     char timeStr[64] = { 0 };
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
@@ -40,14 +43,17 @@ float dot_product(float arr1[], float arr2[], int dim)
 	return sum;
 }
 
+float magnitude(float x, float y) {
+    return sqrt(x*x+y*y);
+}
 
 
 constexpr int screenWidth = 1200;
 constexpr int screenHeight = 900;
 
 const float dt = 1.0 / 60;
-const int width = 300; //num of cells
-const int heigth = 150; //num of cells
+const int width = 150; //num of cells
+const int heigth = 100; //num of cells
 const int cellSize = 1 * screenWidth/width;
 
 //float c = gridsize / dt;
@@ -75,6 +81,8 @@ float u_arr[width][heigth][2];
 
 bool wall_arr[width][heigth];
 
+int timings[10];
+
 void spawnCylinder()
 {
     int middle_x = width / 4;
@@ -100,7 +108,7 @@ void init()
     spawnCylinder(); 
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator(seed);
-    normal_distribution<double> distribution(0.0, 1.0);
+    normal_distribution<float> distribution(0.0, 1.0);
 
     const float ux = 0.15f;
     const float uy = 0.0f;
@@ -128,9 +136,6 @@ void init()
             {
                 //wall_arr[x][y] = true;
             }
-            
-
-            
         }
     }   
     
@@ -169,6 +174,8 @@ void applyBoundaryConditions()
 
 void computeMacroskopic()
 {
+    auto start = high_resolution_clock::now();
+
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
             
@@ -187,18 +194,21 @@ void computeMacroskopic()
                 u_arr[x][y][1] += e_arr[i][1] * c * n_arr[x][y][i];
             }
 
-            if (rho_arr[x][y] == 0)
+            if (rho_arr[x][y] <= 0)
                 cout << "uh oh, rho = 0" << endl;
             
             u_arr[x][y][0] /= rho_arr[x][y];
             u_arr[x][y][1] /= rho_arr[x][y];
         }
     }
-    return;
+
+    auto stop = high_resolution_clock::now();
+    timings[1] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void collision()
 {   
+    auto start = high_resolution_clock::now();
     applyBoundaryConditions();
     computeMacroskopic();
     
@@ -239,10 +249,14 @@ void collision()
             }
         }
     }
+
+    auto stop = high_resolution_clock::now();
+    timings[0] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void streaming()
 {
+    auto start = high_resolution_clock::now();
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
@@ -281,45 +295,41 @@ void streaming()
         }
     }
 
-    memcpy(n_arr, n_temp, sizeof(n_arr));     //27fps 500/250
-
-    /*
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < heigth; y++) {
-            for (int i = 0; i < dims; i++) {
-                n_arr[x][y][i] = n_temp[x][y][i];
-            }
-        }
-    }
-    */
+    memcpy(n_arr, n_temp, sizeof(n_arr));
     
-   
+    auto stop = high_resolution_clock::now();
+    timings[3] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
+float abs_u_arr[width][heigth];
+float max_u = 0;
+Color pixels[width*heigth];
 
-void DrawSpeedAsColor()
-{
-    float abs_u_arr[width][heigth];
-    float max = 0;
-    for (int x = 0; x < width; x++) {
-		for (int y = 0; y < heigth; y++) {
-            abs_u_arr[x][y] = sqrt(dot_product(u_arr[x][y], u_arr[x][y], 2));
-            if (abs_u_arr[x][y] > max)
-            {
-                max = abs_u_arr[x][y];
-            }
-        }
-    }
-    if (max == 0)
-        return;
+Texture2D CalculatePixels() {
+    auto start = high_resolution_clock::now();
     
     for (int x = 0; x < width; x++) {
 		for (int y = 0; y < heigth; y++) {
-            Color color = ColorFromHSV(abs_u_arr[x][y]/max*360, 1, 1);
-            DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, color);
+            abs_u_arr[x][y] = magnitude(u_arr[x][y][0], u_arr[x][y][1]);
+            if (abs_u_arr[x][y] > max_u)
+            {
+                max_u = abs_u_arr[x][y];
+            }
         }
     }
-    return;
+
+    for (int x = 0; x < width; x++) {
+		for (int y = 0; y < heigth; y++) {
+            pixels[x + width * y] = ColorFromHSV(abs_u_arr[x][y]/max_u*360.0f, 1, 1);
+        }
+    }
+    Image screenImage = { .data = pixels, .width = width, .height = heigth, .mipmaps = 1, .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
+    Texture2D texture = LoadTextureFromImage(screenImage);
+
+    auto stop = high_resolution_clock::now();
+    timings[4] = duration_cast<chrono::microseconds>(stop - start).count();
+
+    return texture;
 }
 
 void DrawDensityAsColor()
@@ -355,7 +365,7 @@ void DrawArrow(float posX, float posY, float length, float rotation = 0.0)
     float headLength = length / 3;
     //DrawTriangle({100, 100}, {75,150}, {125, 150}, BLACK);
     //DrawTriangle({endPosX - sin(rotation) * 10 , endPosY + cos(rotation) * 10}, {endPosX + cos(rotation)*10, endPosY + sin(rotation)*10},  {endPosX + sin(rotation) * 10, endPosY - cos(rotation) * 10}, BLACK);
-    DrawTriangle({endPosX - sin(rotation) * headWidth - cos(rotation) * headLength, endPosY + cos(rotation) * headWidth - sin(rotation) * headLength}, {endPosX, endPosY},  {endPosX + sin(rotation) * headWidth - cos(rotation) * headLength, endPosY - cos(rotation) * headWidth - sin(rotation) * headLength}, BLACK);
+    DrawTriangle({(float)(endPosX - sin(rotation) * headWidth - cos(rotation) * headLength), (float)(endPosY + cos(rotation) * headWidth - sin(rotation) * headLength)}, {(float)endPosX, (float)endPosY},  {(float)(endPosX + sin(rotation) * headWidth - cos(rotation) * headLength), (float)(endPosY - cos(rotation) * headWidth - sin(rotation) * headLength)}, BLACK);
     DrawLine(posX, posY, endPosX, endPosY, BLACK);
 
 }
@@ -369,7 +379,6 @@ void DrawVelocityFieldVectors()
             abs_u_arr[x][y] = sqrt(pow(u_arr[x][y][0], 2) + pow(u_arr[x][y][1], 2));
             if (abs_u_arr[x][y] > max)
                 max = abs_u_arr[x][y];
-            
         }
     }
     if (max == 0)
@@ -411,29 +420,42 @@ int main()
     //cout << dot_product(w_arr, w_arr, sizeof(w_arr)/sizeof(*w_arr)) << endl;
     //cout <<  << endl;
     init();
+    
+    //collision();
+    //streaming();
+    //cout << u_arr[19][9][1];
+
+    //cout << n_arr[0][0][0] << endl;
+    //update
 
     int i = 0;
     while (!WindowShouldClose())
-    {
+    {        
         //rotation += PI /180;
-        streaming();
-        collision();
+        for (int x = 0; x < 1; x++) {
+            streaming();
+            collision();
+        }
         
-        if (i % 10 == 0)
-        {
-            BeginDrawing();
+        Texture2D texture = CalculatePixels();
+
+
+        BeginDrawing();
             ClearBackground(WHITE);
-            DrawSpeedAsColor();
             //DrawDensityAsColor();
+            
+            DrawTexturePro(
+                texture,
+                (Rectangle){ 0, 0, (float)texture.width, (float)texture.height }, 
+                (Rectangle){ 0, 0, (float)texture.width*cellSize, (float)texture.height*cellSize },
+                (Vector2) { 0, 0 }, 0, WHITE);
 
             //DrawVelocityFieldVectors();
             DrawWall();
 
-            DrawText(TextFormat("%d fps", GetFPS()), 10, screenHeight - 20, 20, BLACK);
-
-            EndDrawing();
+            DrawFPS(10, screenHeight - 30);
+        EndDrawing();
             
-        }
         
         Vector2 mouse_pos = GetMousePosition();
         Vector2 mouse_index = {floor(mouse_pos.x / cellSize), floor(mouse_pos.y / cellSize)};
@@ -449,7 +471,8 @@ int main()
             }
         }
         
-        
+        printf("\rTimings: collision(%d), makros(%d), streaming(%d), drawSpeed(%d)       ", timings[0], timings[1], timings[3], timings[4]);
+        fflush(stdout);
         
         //DrawCircle(100, 100, 40, RED);
         
