@@ -79,7 +79,7 @@ void spawnCylinder()
 {
     int middle_x = width / 4;
     int middle_y = heigth / 2;
-    int radius = 9;
+    int radius = 16;
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
@@ -187,7 +187,7 @@ void computeMacroskopic()
                 u_arr[x][y][1] += e_arr[i][1] * c * n_arr[x][y][i];
             }
 
-            if (rho_arr[x][y] == 0)
+            if (rho_arr[x][y] < 0)
                 cout << "uh oh, rho = 0" << endl;
             
             u_arr[x][y][0] /= rho_arr[x][y];
@@ -315,7 +315,7 @@ void DrawSpeedAsColor()
     
     for (int x = 0; x < width; x++) {
 		for (int y = 0; y < heigth; y++) {
-            Color color = ColorFromHSV(abs_u_arr[x][y]/max*360, 1, 1);
+            Color color = ColorFromHSV(abs_u_arr[x][y] * 2.0 * 360, 1, 1);
             DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, color);
         }
     }
