@@ -1,11 +1,11 @@
 #include <raylib.h>
-#include <raymath.h>
 #include <cmath>
 #include <iostream>
 #include <vector>
 #include <stdio.h> 
 #include <random>
 #include <chrono>
+#include <raymath.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -51,8 +51,8 @@ constexpr int screenWidth = 1200;
 constexpr int screenHeight = 900;
 
 const float dt = 1.0 / 60;
-const int width = 200; //num of cells
-const int heigth = 100; //num of cells
+const int width = 300; //num of cells
+const int heigth = 150; //num of cells
 const int cellSize = 1 * screenWidth/width;
 
 //float c = gridsize / dt;
@@ -64,7 +64,7 @@ int dims = 9;
 constexpr float inletVelocity = 0.1f;
 constexpr float rho0 = 1.0f;
 
-constexpr float velocityDrawScale = 5.0f;
+constexpr float velocityDrawScale = 10.0f;
 
 float n_arr[width][heigth][9];	//2D array in which cells are densities of the 9 vectors to neighbor cells.
 float n_temp[width][heigth][9];
@@ -72,7 +72,6 @@ float n_temp[width][heigth][9];
 
 float w_arr[9] = {4.0/9.0f, 1.0/9.0f, 1.0/36.0f, 1.0/9.0f, 1.0/36.0f, 1.0/9.0f, 1.0/36.0f, 1.0/9.0f, 1.0/36.0f};	//Boltzmann Distribution weights for the neighbor vectors.
 
-//float e_arr[9][2] = {{0, 0}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {-1, 1}, {-1, -1}, {1, -1}};
 float e_arr[9][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1}};
 
 
@@ -85,9 +84,9 @@ int timings[10];
 
 void spawnCylinder()
 {
-    int middle_x = width / 3;
+    int middle_x = width / 4;
     int middle_y = heigth / 2;
-    int radius = 7;
+    int radius = 9;
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
@@ -105,23 +104,32 @@ void spawnCylinder()
 
 void init()
 {
+    spawnCylinder(); 
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator(seed);
     normal_distribution<double> distribution(0.0, 1.0);
 
+    const float ux = 0.15f;
+    const float uy = 0.0f;
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
+            if (wall_arr[x][y])
+                continue;
             for (int i = 0; i < dims; i++){
-                n_arr[x][y][i] = w_arr[i] * (1.0 + 0.01 * distribution(generator));
-                //n_arr[x][y][1] = 3;
+                //n_arr[x][y][i] = w_arr[i] * (1.0 + 0.01 * distribution(generator));
+                
+
+                const float eDotU = e_arr[i][0] * ux * (1 + 0.05 * distribution(generator)) + e_arr[i][1] * uy;
+                const float u2 = ux * ux + uy * uy;
+                n_arr[x][y][i] = rho0 * w_arr[i] * (1.0f + 3.0f * eDotU + 4.5f * eDotU * eDotU - 1.5f * u2);
             }
             rho_arr[x][y] = 1;
 
-            wall_arr[x][y] = false;
+            //wall_arr[x][y] = false;
 
             if (y == 0 || y == heigth - 1)
             {
-                wall_arr[x][y] = true;
+                //wall_arr[x][y] = true;
             }
             if (x == 5 && y == 5)
             {
@@ -129,49 +137,13 @@ void init()
             }
         }
     }   
-    spawnCylinder(); 
-}
-
-
-void applyBoundaryConditionsOg()
-{
-    for (int y = 0; y < heigth; y++) {
-        if (!wall_arr[0][y]) {
-            const float ux = inletVelocity;
-            const float uy = 0.0f;
-            for (int i = 0; i < dims; i++) {
-                const float eDotU = e_arr[i][0] * ux + e_arr[i][1] * uy;
-                const float u2 = ux * ux + uy * uy;
-                n_arr[0][y][i] = rho0 * w_arr[i] * (1.0f + 3.0f * eDotU + 4.5f * eDotU * eDotU - 1.5f * u2);
-            }
-        }
-
-        if (!wall_arr[width - 1][y]) {
-            const int prev = width - 2;
-            const float rho = rho_arr[prev][y] > 0.0f ? rho_arr[prev][y] : rho0;
-            const float ux = u_arr[prev][y][0];
-            const float uy = u_arr[prev][y][1];
-            for (int i = 0; i < dims; i++) {
-                const float eDotU = e_arr[i][0] * ux + e_arr[i][1] * uy;
-                const float u2 = ux * ux + uy * uy;
-                n_arr[width - 1][y][i] = rho * w_arr[i] * (1.0f + 3.0f * eDotU + 4.5f * eDotU * eDotU - 1.5f * u2);
-            }
-        }
-    }
+    
 }
 
 void applyBoundaryConditions()
 {
     for (int y = 0; y < heigth; y++) {
         if (!wall_arr[0][y]) {
-            // Fix velocity at the inlet, but DERIVE its density from the
-            // interior instead of hard-coding rho0. Hard-fixing both rho
-            // and u here pumps a constant mass flux into the domain every
-            // step regardless of what the rest of the flow is doing - with
-            // no matching outlet, that mass has nowhere to go, density
-            // creeps up everywhere, and since u = momentum/rho, velocity
-            // gets diluted toward zero even though the inlet never stops
-            // forcing it. That's the actual cause of the "decay".
             const float ux = inletVelocity;
             const float uy = 0.0f;
             const float rho = rho_arr[1][y] > 0.0f ? rho_arr[1][y] : rho0;
@@ -182,13 +154,8 @@ void applyBoundaryConditions()
             }
         }
 
+        
         if (!wall_arr[width - 1][y]) {
-            // Fix density at the outlet (a constant reference "outflow
-            // pressure"), derive velocity from the interior. This is what
-            // actually lets outflow mass balance inflow mass in steady
-            // state - previously both rho and u were copied from upstream
-            // here, so the outlet just mirrored the same collapsing
-            // velocity instead of draining the system.
             const int prev = width - 2;
             const float rho = rho0;
             const float ux = u_arr[prev][y][0];
@@ -199,6 +166,7 @@ void applyBoundaryConditions()
                 n_arr[width - 1][y][i] = rho * w_arr[i] * (1.0f + 3.0f * eDotU + 4.5f * eDotU * eDotU - 1.5f * u2);
             }
         }
+        
     }
 }
 
@@ -439,6 +407,7 @@ int main()
     //screen setup
     
     InitWindow(screenWidth, screenHeight, "LBM");
+    //SetTargetFPS(60);
     SetTraceLogCallback(CustomTraceLog);
     
     //cout << dot_product(w_arr, w_arr, sizeof(w_arr)/sizeof(*w_arr)) << endl;
