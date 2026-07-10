@@ -80,7 +80,6 @@ float rho_arr[width][heigth];
 float u_arr[width][heigth][2];
 
 bool wall_arr[width][heigth];
-float pixels[width][heigth];
 
 int timings[10];
 
@@ -92,7 +91,7 @@ void spawnCylinder()
 
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < heigth; y++) {
-            float midpoint_sq = pow(x - middle_x - 0.5, 2) + pow(y - middle_y + 1, 2);
+            float midpoint_sq = pow(x - middle_x + 0.5, 2) + pow(y - middle_y + 0.5, 2);
             if (midpoint_sq <= pow(radius, 2))
             {
                 wall_arr[x][y] = true;
@@ -128,16 +127,13 @@ void init()
             {
                 //wall_arr[x][y] = true;
             }
-            
-
-            
         }
     }   
     spawnCylinder(); 
 }
 
 
-void applyBoundaryConditionsOG()
+void applyBoundaryConditionsOg()
 {
     for (int y = 0; y < heigth; y++) {
         if (!wall_arr[0][y]) {
@@ -338,8 +334,7 @@ void streaming()
 
 float abs_u_arr[width][heigth];
 float max_u = 0;
-
-void UpdatePixels() {
+void DrawSpeedAsColor() {
     auto start = high_resolution_clock::now();
     
     for (int x = 0; x < width; x++) {
@@ -349,26 +344,17 @@ void UpdatePixels() {
             {
                 max_u = abs_u_arr[x][y];
             }
+        }
+    }
 
-            pixels[x][y] = abs_u_arr[x][y]/max_u*360.0f;
+    for (int x = 0; x < width; x++) {
+		for (int y = 0; y < heigth; y++) {
+            Color color = ColorFromHSV(abs_u_arr[x][y]/max_u*360.0f, 1, 1);
+            DrawPixel(x, y, color);
         }
     }
     auto stop = high_resolution_clock::now();
     timings[4] = duration_cast<chrono::microseconds>(stop - start).count();
-}
-
-void DrawSpeedAsColor()
-{
-    auto start = high_resolution_clock::now();
-    for (int x = 0; x < width; x++) {
-		for (int y = 0; y < heigth; y++) {
-            Color color = ColorFromHSV(pixels[x][y], 1, 1);
-            DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, color);
-        }
-    }
-
-    auto stop = high_resolution_clock::now();
-    timings[5] = duration_cast<chrono::microseconds>(stop - start).count();
 }
 
 void DrawDensityAsColor()
@@ -465,28 +451,36 @@ int main()
 
     //cout << n_arr[0][0][0] << endl;
     //update
+    RenderTexture2D target = LoadRenderTexture(width, heigth);
+
     int i = 0;
     while (!WindowShouldClose())
     {        
         //rotation += PI /180;
-        streaming();
-        collision();
-        
-        if (i % 1 == 0)
-        {
-            UpdatePixels();
+        for (int x = 0; x < 10; x++) {
+            streaming();
+            collision();
         }
+    
+        BeginTextureMode(target);
+            ClearBackground(WHITE);
+            DrawSpeedAsColor();
+        EndTextureMode();
 
         BeginDrawing();
-        ClearBackground(WHITE);
-        DrawSpeedAsColor();
-        //DrawDensityAsColor();
+            ClearBackground(WHITE);
+            //DrawDensityAsColor();
 
-        //DrawVelocityFieldVectors();
-        DrawWall();
+            DrawTexturePro(
+                target.texture,
+                (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height }, 
+                (Rectangle){ 0, 0, (float)target.texture.width*cellSize, (float)target.texture.height*cellSize },
+                (Vector2) { 0, 0 }, 0, WHITE);
 
-        DrawText(TextFormat("%d fps", GetFPS()), 10, screenHeight - 20, 20, BLACK);
+            //DrawVelocityFieldVectors();
+            DrawWall();
 
+            DrawFPS(10, screenHeight - 30);
         EndDrawing();
             
         
@@ -504,7 +498,7 @@ int main()
             }
         }
         
-        printf("\rTimings: collision(%d), makros(%d), streaming(%d), updatePx(%d), drawSpeed(%d)", timings[0], timings[1], timings[3], timings[4], timings[5]);
+        printf("\rTimings: collision(%d), makros(%d), streaming(%d), drawSpeed(%d)", timings[0], timings[1], timings[3], timings[4]);
         fflush(stdout);
         
         //DrawCircle(100, 100, 40, RED);
