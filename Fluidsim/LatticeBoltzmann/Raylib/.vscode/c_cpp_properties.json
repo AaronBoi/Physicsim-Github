@@ -3,14 +3,17 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:/raylib/raylib/src/**",
-                "${workspaceFolder}/**"
+                "C:/raylib/raylib-6.0/src",
+                "${workspaceFolder}",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/external",
+                "${workspaceFolder}/lib"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "GRAPHICS_API_OPENGL_33",
+                "GRAPHICS_API_OPENGL_43",
                 "PLATFORM_DESKTOP"
             ],
             "compilerPath": "C:/raylib/w64devkit/bin/gcc.exe",
@@ -29,7 +32,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "GRAPHICS_API_OPENGL_33",
+                "GRAPHICS_API_OPENGL_43",
                 "PLATFORM_DESKTOP"
             ],
             "macFrameworkPath": [
@@ -50,7 +53,7 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "GRAPHICS_API_OPENGL_33",
+                "GRAPHICS_API_OPENGL_43",
                 "PLATFORM_DESKTOP"
             ],
             "cStandard": "c11",

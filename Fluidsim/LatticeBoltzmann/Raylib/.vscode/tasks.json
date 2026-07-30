@@ -12,9 +12,9 @@
             "windows": {
                 "command": "C:/raylib/w64devkit/bin/mingw32-make.exe",
                 "args": [
-                    "RAYLIB_PATH=C:/raylib/raylib",
+                    "RAYLIB_PATH=C:/raylib/raylib-6.0",
                     "PROJECT_NAME=${fileBasenameNoExtension}",
-                    "OBJS=src/*.cpp",
+                    "OBJS=$(wildcard src/*.cpp) $(wildcard src/external/*.cpp)",
                     "BUILD_MODE=DEBUG"
                 ]
             },
@@ -53,9 +53,10 @@
             "windows": {
                 "command": "C:/raylib/w64devkit/bin/mingw32-make.exe",
                 "args": [
-                    "RAYLIB_PATH=C:/raylib/raylib",
+                    "RAYLIB_PATH=C:/raylib/raylib-6.0",
                     "PROJECT_NAME=${fileBasenameNoExtension}",
-                    "OBJS=src/*.cpp"
+                    "OBJS=$(wildcard src/*.cpp) $(wildcard src/external/*.cpp)",
+                    "BUILD_MODE=DEBUG"
                 ]
             },
             "osx": {
