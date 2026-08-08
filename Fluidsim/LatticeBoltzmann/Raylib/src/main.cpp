@@ -61,8 +61,8 @@ constexpr int screenWidth = 1200;
 constexpr int screenHeight = 900;
 
 const float dt = 1.0 / 60;
-const int width = 1000; //num of cells
-const int height = 500; //num of cells
+const int width = 250; //num of cells
+const int height = 125; //num of cells
 const float cellSize = 1.0 * float(screenWidth/width);
 
 //float c = gridsize / dt;
@@ -111,7 +111,7 @@ bool walls_with_mouse = false;
 bool walls_top_bottom = true; 
 float cylinder_radius = height / 4;
 bool gravity = false;
-bool collision_GPU = true;
+bool collision_GPU = false;
 
 void spawnCylinder()
 {
@@ -131,7 +131,6 @@ void spawnCylinder()
     }
     
 }
-
 
 void init()
 {
@@ -182,9 +181,6 @@ void init()
     }  
     reset = false;
 }
-
-
-
 
 void applyOpenBoundary()
 {
@@ -345,6 +341,135 @@ Texture2D CalculatePixels() {
     return texture;
 }
 
+void computeMacroskopic()
+{
+    auto start = high_resolution_clock::now();
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            
+            rho_arr[x][y] = 0;
+            u_arr[x][y][0] = 0;
+            u_arr[x][y][1] = 0;
+
+            if (wall_arr[x][y]) {
+                rho_arr[x][y] = 1.0f;
+                continue;
+            }
+
+            for (int i = 0; i < dims; i++) {    
+                rho_arr[x][y] += n_arr[x][y][i];
+                u_arr[x][y][0] += e_arr[i][0] * c * n_arr[x][y][i];
+                u_arr[x][y][1] += e_arr[i][1] * c * n_arr[x][y][i];
+            }
+
+            if (rho_arr[x][y] < 0)
+            if (rho_arr[x][y] <= 0)
+                cout << "uh oh, rho = 0" << endl;
+            
+            u_arr[x][y][0] /= rho_arr[x][y];
+            u_arr[x][y][1] /= rho_arr[x][y];
+        }
+    }
+
+    auto stop = high_resolution_clock::now();
+    timings[1] = duration_cast<chrono::microseconds>(stop - start).count();
+}
+
+void collision()
+{   
+    auto start = high_resolution_clock::now();
+    computeMacroskopic();
+    
+    //float n_new[width][heigth][9];
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            if (wall_arr[x][y]) //Bounceback from Wall, switch the 8 vectors
+            {
+                float temp = n_arr[x][y][1];
+                n_arr[x][y][1] = n_arr[x][y][5];
+                n_arr[x][y][5] = temp; 
+
+                temp = n_arr[x][y][2];
+                n_arr[x][y][2] = n_arr[x][y][6];
+                n_arr[x][y][6] = temp; 
+
+                temp = n_arr[x][y][3];
+                n_arr[x][y][3] = n_arr[x][y][7];
+                n_arr[x][y][7] = temp; 
+
+                temp = n_arr[x][y][4];
+                n_arr[x][y][4] = n_arr[x][y][8];
+                n_arr[x][y][8] = temp; 
+                continue;
+            }
+    
+            //Collision between Distribution
+            float rho = rho_arr[x][y];
+            float u[] = {u_arr[x][y][0], u_arr[x][y][1]};
+                
+            for (int i = 0; i < dims; i++) {
+                
+                float eDotU = e_arr[i][0] * u[0] + e_arr[i][1] * u[1];
+                float temp = 1.0f + 3.0f * eDotU + 4.5f * eDotU * eDotU - 1.5f * (u[0] * u[0] + u[1] * u[1]);
+                
+                float n_eq = rho * w_arr[i] * temp;
+                n_arr[x][y][i] = n_arr[x][y][i] - 1 / tau * (n_arr[x][y][i] - n_eq);
+            }
+        }
+    }
+
+    auto stop = high_resolution_clock::now();
+    timings[0] = duration_cast<chrono::microseconds>(stop - start).count();
+}
+
+void streaming()
+{
+    auto start = high_resolution_clock::now();
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            int x_n = x - 1;
+            int x_p = x + 1;
+            int y_n = y - 1;
+            int y_p = y + 1;
+            
+            if (x_n < 0)
+            {
+                x_n = width - 1;
+            }
+            else if(x_p > width - 1)
+            {
+                x_p = 0;
+            }
+            if (y_n < 0)
+            {
+                y_n = height - 1;
+            }
+            else if(y_p > height - 1)
+            {
+                y_p = 0;
+            }
+
+            n_temp[x][y][0] = n_arr[x][y][0];
+            n_temp[x_p][y][1] = n_arr[x][y][1];
+            n_temp[x_p][y_p][2] = n_arr[x][y][2];
+            n_temp[x][y_p][3] = n_arr[x][y][3];
+            n_temp[x_n][y_p][4] = n_arr[x][y][4];
+            n_temp[x_n][y][5] = n_arr[x][y][5];
+            n_temp[x_n][y_n][6] = n_arr[x][y][6];
+            n_temp[x][y_n][7] = n_arr[x][y][7];
+            n_temp[x_p][y_n][8] = n_arr[x][y][8];
+
+        }
+    }
+
+    memcpy(n_arr, n_temp, sizeof(n_arr));
+    
+    auto stop = high_resolution_clock::now();
+    timings[3] = duration_cast<chrono::microseconds>(stop - start).count();
+}
+
 void DrawDensityAsColor()
 {
     float max = 0;
@@ -465,7 +590,6 @@ void MakeImGui()
     rlImGuiEnd();
 }
 
-
 int main() 
 {   
 
@@ -476,24 +600,28 @@ int main()
     rlImGuiSetup(true);
     init();
     
-    char *shaderCode = LoadFileText("Shaders/collision.glsl");
-    int shaderData = rlLoadShader(shaderCode, RL_COMPUTE_SHADER);
-    int computeShader = rlLoadShaderProgramCompute(shaderData);
-    UnloadFileText(shaderCode);
+    int ssbo0, ssbo1, ssbo2, ssbo3, ssbo4;
+    int computeShader, computeShaderStreaming;
 
-    shaderCode = LoadFileText("Shaders/streaming.glsl");
-    shaderData = rlLoadShader(shaderCode, RL_COMPUTE_SHADER);
-    int computeShaderStreaming = rlLoadShaderProgramCompute(shaderData);
-    UnloadFileText(shaderCode);
+    if (collision_GPU)
+    {
+        char *shaderCode = LoadFileText("resources/collision.glsl");
+        int shaderData = rlLoadShader(shaderCode, RL_COMPUTE_SHADER);
+        computeShader = rlLoadShaderProgramCompute(shaderData);
+        UnloadFileText(shaderCode);
 
-    int ssbo0 = rlLoadShaderBuffer(sizeof(n_arr), n_arr, RL_DYNAMIC_COPY);
-    int ssbo1 = rlLoadShaderBuffer(sizeof(wall_arr), wall_arr, RL_DYNAMIC_COPY);
-    int ssbo2 = rlLoadShaderBuffer(sizeof(rho_arr), rho_arr, RL_DYNAMIC_COPY);
-    int ssbo3 = rlLoadShaderBuffer(sizeof(u_arr), u_arr, RL_DYNAMIC_COPY);
-    int ssbo4 = rlLoadShaderBuffer(sizeof(n_temp), n_temp, RL_DYNAMIC_COPY);
+        shaderCode = LoadFileText("resources/streaming.glsl");
+        shaderData = rlLoadShader(shaderCode, RL_COMPUTE_SHADER);
+        computeShaderStreaming = rlLoadShaderProgramCompute(shaderData);
+        UnloadFileText(shaderCode);
 
-
-
+        ssbo0 = rlLoadShaderBuffer(sizeof(n_arr), n_arr, RL_DYNAMIC_COPY);
+        ssbo1 = rlLoadShaderBuffer(sizeof(wall_arr), wall_arr, RL_DYNAMIC_COPY);
+        ssbo2 = rlLoadShaderBuffer(sizeof(rho_arr), rho_arr, RL_DYNAMIC_COPY);
+        ssbo3 = rlLoadShaderBuffer(sizeof(u_arr), u_arr, RL_DYNAMIC_COPY);
+        ssbo4 = rlLoadShaderBuffer(sizeof(n_temp), n_temp, RL_DYNAMIC_COPY);
+    }
+    
     int i = 0;
     while (!WindowShouldClose())
     {        
@@ -502,61 +630,68 @@ int main()
         for (int x = 0; x < 10; x++) {
             if (!running) break;
             
-                
-            rlUpdateShaderBuffer(ssbo0, &n_arr, sizeof(n_arr), 0);
-            rlUpdateShaderBuffer(ssbo1, &wall_arr, sizeof(wall_arr), 0);
-            
-            //rlUpdateShaderBuffer(ssbo2, &rho_arr, sizeof(rho_arr), 0);
-            //rlUpdateShaderBuffer(ssbo3, &u_arr, sizeof(u_arr), 0);
-
-            memcpy(n_temp, n_arr, sizeof(n_temp));
-
-            rlEnableShader(computeShader);
-        
-                rlSetUniform(0, &width, SHADER_UNIFORM_INT, 1);
-                rlSetUniform(1, &height, SHADER_UNIFORM_INT, 1);
-                rlSetUniform(2, &tau, SHADER_UNIFORM_FLOAT, 1);
-                rlSetUniform(3, &periodic_border, SHADER_UNIFORM_INT, 1);
-
-                rlBindShaderBuffer(ssbo0, 0);
-                rlBindShaderBuffer(ssbo1, 1);
-                rlBindShaderBuffer(ssbo2, 2);
-                rlBindShaderBuffer(ssbo3, 3);
-                rlBindShaderBuffer(ssbo4, 4);
-                
-                rlComputeShaderDispatch(ceil(width / 32.0), ceil(height / 32.0), 1);
-                //rlComputeShaderDispatch(width, height, 1);
-
-                rlReadShaderBuffer(ssbo0, n_arr, sizeof(n_arr), 0);
-                rlReadShaderBuffer(ssbo2, rho_arr, sizeof(rho_arr), 0);
-                rlReadShaderBuffer(ssbo3, u_arr, sizeof(u_arr), 0);
-                rlReadShaderBuffer(ssbo4, n_temp, sizeof(n_temp), 0);
-                
-                
-            rlDisableShader();
-            
-
-            memset(n_temp, 0, sizeof(n_temp)); //not good if periodic boundary is false
-            rlEnableShader(computeShaderStreaming);
-
-                rlSetUniform(0, &width, SHADER_UNIFORM_INT, 1);
-                rlSetUniform(1, &height, SHADER_UNIFORM_INT, 1);
-                rlSetUniform(3, &periodic_border, SHADER_UNIFORM_INT, 1);
-
+            if (collision_GPU)
+            {
+               
                 rlUpdateShaderBuffer(ssbo0, &n_arr, sizeof(n_arr), 0);
                 rlUpdateShaderBuffer(ssbo1, &wall_arr, sizeof(wall_arr), 0);
-                rlUpdateShaderBuffer(ssbo4, &n_temp, sizeof(n_temp), 0);
+                
+                //rlUpdateShaderBuffer(ssbo2, &rho_arr, sizeof(rho_arr), 0);
+                //rlUpdateShaderBuffer(ssbo3, &u_arr, sizeof(u_arr), 0);
 
-                rlBindShaderBuffer(ssbo0, 0);
-                rlBindShaderBuffer(ssbo1, 1);
-                rlBindShaderBuffer(ssbo4, 4);
+                memcpy(n_temp, n_arr, sizeof(n_temp));
 
-                rlComputeShaderDispatch(ceil(width / 32.0), ceil(height / 32.0), 1);
+                rlEnableShader(computeShader);
+            
+                    rlSetUniform(0, &width, SHADER_UNIFORM_INT, 1);
+                    rlSetUniform(1, &height, SHADER_UNIFORM_INT, 1);
+                    rlSetUniform(2, &tau, SHADER_UNIFORM_FLOAT, 1);
+                    rlSetUniform(3, &periodic_border, SHADER_UNIFORM_INT, 1);
 
-                rlReadShaderBuffer(ssbo4, n_temp, sizeof(n_temp), 0);
+                    rlBindShaderBuffer(ssbo0, 0);
+                    rlBindShaderBuffer(ssbo1, 1);
+                    rlBindShaderBuffer(ssbo2, 2);
+                    rlBindShaderBuffer(ssbo3, 3);
+                    rlBindShaderBuffer(ssbo4, 4);
+                    
+                    rlComputeShaderDispatch(ceil(width / 32.0), ceil(height / 32.0), 1);
+                    //rlComputeShaderDispatch(width, height, 1);
 
-            rlDisableShader();
-        
+                    rlReadShaderBuffer(ssbo0, n_arr, sizeof(n_arr), 0);
+                    rlReadShaderBuffer(ssbo2, rho_arr, sizeof(rho_arr), 0);
+                    rlReadShaderBuffer(ssbo3, u_arr, sizeof(u_arr), 0);
+                    rlReadShaderBuffer(ssbo4, n_temp, sizeof(n_temp), 0);
+                    
+                    
+                rlDisableShader();
+                
+
+                memset(n_temp, 0, sizeof(n_temp)); //not good if periodic boundary is false
+                rlEnableShader(computeShaderStreaming);
+
+                    rlSetUniform(0, &width, SHADER_UNIFORM_INT, 1);
+                    rlSetUniform(1, &height, SHADER_UNIFORM_INT, 1);
+                    rlSetUniform(3, &periodic_border, SHADER_UNIFORM_INT, 1);
+
+                    rlUpdateShaderBuffer(ssbo0, &n_arr, sizeof(n_arr), 0);
+                    rlUpdateShaderBuffer(ssbo1, &wall_arr, sizeof(wall_arr), 0);
+                    rlUpdateShaderBuffer(ssbo4, &n_temp, sizeof(n_temp), 0);
+
+                    rlBindShaderBuffer(ssbo0, 0);
+                    rlBindShaderBuffer(ssbo1, 1);
+                    rlBindShaderBuffer(ssbo4, 4);
+
+                    rlComputeShaderDispatch(ceil(width / 32.0), ceil(height / 32.0), 1);
+
+                    rlReadShaderBuffer(ssbo4, n_temp, sizeof(n_temp), 0);
+
+                rlDisableShader();
+            }
+            else
+            {
+                collision();
+                streaming();
+            }
             memcpy(n_arr, n_temp, sizeof(n_arr));
             //applyOpenBoundary();        
             ZouHe_Velocity_Boundary();
